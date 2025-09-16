@@ -1,68 +1,106 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
+/* Kenya E-Vote Design System - Modern Tailwind Styling */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    /* Base colors */
+    --color-bg: hsl(0 0% 98%);
+    --color-fg: hsl(0 0% 15%);
+
+    /* Cards & Popovers */
+    --color-card: hsl(0 0% 100%);
+    --color-card-fg: hsl(0 0% 15%);
+    --color-popover: hsl(0 0% 100%);
+    --color-popover-fg: hsl(0 0% 15%);
+
+    /* Flag colors */
+    --color-primary: hsl(0 0% 20%);
+    --color-primary-fg: hsl(0 0% 98%);
+    --color-secondary: hsl(0 65% 45%);
+    --color-secondary-fg: hsl(0 0% 98%);
+    --color-accent: hsl(142 55% 35%);
+    --color-accent-fg: hsl(0 0% 98%);
+
+    /* Status colors */
+    --color-success: hsl(142 76% 36%);
+    --color-success-fg: hsl(0 0% 98%);
+    --color-destructive: hsl(0 84% 60%);
+    --color-destructive-fg: hsl(0 0% 98%);
+    --color-warning: hsl(45 93% 47%);
+    --color-warning-fg: hsl(0 0% 98%);
+    --color-info: hsl(217 91% 60%);
+    --color-info-fg: hsl(0 0% 98%);
+
+    /* Muted & borders */
+    --color-muted: hsl(210 40% 96%);
+    --color-muted-fg: hsl(215 16% 47%);
+    --color-border: hsl(214 32% 91%);
+    --color-input: hsl(214 32% 91%);
+    --color-ring: hsl(142 55% 35%);
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    --gradient-hero: linear-gradient(135deg, var(--color-primary)/0.9, var(--color-secondary)/0.8);
+    --gradient-card: linear-gradient(145deg, var(--color-card), var(--color-muted)/0.3);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(var(--color-primary) / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(var(--color-primary) / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(var(--color-primary) / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(var(--color-primary) / 0.1);
+
+    /* Radius & transitions */
+    --radius: 0.75rem;
+    --transition-all: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-colors: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
-  a:hover {
-    color: #747bff;
+
+  /* Dark mode */
+  .dark {
+    --color-bg: hsl(0 0% 8%);
+    --color-fg: hsl(0 0% 95%);
+    --color-card: hsl(0 0% 12%);
+    --color-card-fg: hsl(0 0% 95%);
+    --color-popover: hsl(0 0% 12%);
+    --color-popover-fg: hsl(0 0% 95%);
+    --color-primary: hsl(0 0% 95%);
+    --color-primary-fg: hsl(0 0% 15%);
+    --color-secondary: hsl(0 65% 55%);
+    --color-secondary-fg: hsl(0 0% 95%);
+    --color-accent: hsl(142 55% 45%);
+    --color-accent-fg: hsl(0 0% 95%);
+    --color-muted: hsl(0 0% 15%);
+    --color-muted-fg: hsl(215 16% 65%);
+    --color-success: hsl(142 76% 46%);
+    --color-success-fg: hsl(0 0% 95%);
+    --color-destructive: hsl(0 84% 70%);
+    --color-destructive-fg: hsl(0 0% 95%);
+    --color-warning: hsl(45 93% 57%);
+    --color-warning-fg: hsl(0 0% 95%);
+    --color-info: hsl(217 91% 70%);
+    --color-info-fg: hsl(0 0% 95%);
+    --color-border: hsl(0 0% 20%);
+    --color-input: hsl(0 0% 20%);
+    --color-ring: hsl(142 55% 45%);
   }
-  button {
-    background-color: #f9f9f9;
+
+  /* Global element styling */
+  @layer base{
+    *{
+    border-color: var(--border);
   }
+  body {
+    background-color: hsl(var(--background));color:hsl(var(--foreground));
+  }
+}
+
+@layer utilities {
+  .rounded-custom {
+    border-radius: var(--radius);
+  }
+  .shadow-custom-sm { box-shadow: var(--shadow-sm); }
+  .shadow-custom-md { box-shadow: var(--shadow-md); }
+  .shadow-custom-lg { box-shadow: var(--shadow-lg); }
+  .shadow-custom-xl { box-shadow: var(--shadow-xl); }
+}
 }
