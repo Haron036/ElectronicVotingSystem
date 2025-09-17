@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../co
 import { Badge } from "../components/ui/badge.jsx";
 import { Link } from "react-router-dom";
 import { Vote, Shield, Users, BarChart3, CheckCircle, Lock } from "lucide-react";
+import ReactCountryFlag from "react-country-flag";
 
 const Landing = () => {
   return (
@@ -10,10 +11,7 @@ const Landing = () => {
       {/* Navigation */}
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Vote className="h-8 w-8 text-accent" />
-            <span className="text-2xl font-bold text-foreground">E-VoteKE</span>
-          </div>
+          <div className="flex items-center space-x-2"> <Vote className="h-8 w-8 text-accent" /> <span className="text-2xl font-bold text-foreground">E-VoteKE</span> <ReactCountryFlag countryCode="KE" svg style={{ width: 'auto', height: '1.5rem', }} /> </div>
           <div className="flex items-center space-x-4">
             <Link to="/login">
               <Button variant="outline" className="hover:bg-green-600">Login</Button>
@@ -54,8 +52,8 @@ const Landing = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose E-VoteKE?</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-green-600 mb-4">Why Choose E-VoteKE?</h2>
+            <p className="text-xl  text-muted-foreground max-w-2xl mx-auto">
               Built with cutting-edge security and Kenya's administrative structure in mind
             </p>
           </div>
@@ -141,7 +139,7 @@ const Landing = () => {
               <div className="text-muted-foreground">Wards</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-info mb-2">40,883</div>
+              <div className="text-4xl font-bold text-info mb-2">46,232 </div>
               <div className="text-muted-foreground">Polling Stations</div>
             </div>
           </div>

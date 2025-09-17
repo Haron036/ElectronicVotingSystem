@@ -48,7 +48,7 @@ const Dashboard = () => {
         );
         setUser(userRes.data);
 
-        // Fetch elections
+        // Fetch elections with candidates
         const electionsRes = await axios.get(
           "http://localhost:8080/api/elections",
           { headers: { Authorization: `Bearer ${token}` } }
@@ -69,7 +69,6 @@ const Dashboard = () => {
       </div>
     );
 
-  // Filter elections
   const activeElections = elections.filter((e) => e.status === "ACTIVE");
   const upcomingElections = elections.filter((e) => e.status === "UPCOMING");
   const completedElections = elections.filter((e) => e.status === "COMPLETED");
@@ -109,32 +108,28 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Vote className="h-8 w-8 text-accent" />
-              <span className="text-2xl font-bold">E-VoteKE</span>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </div>
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Vote className="h-8 w-8 text-accent" />
+            <span className="text-2xl font-bold">E-VoteKE</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" size="sm">
+              <Bell className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm">
+              <Settings className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleLogout}>
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-
-         {/* Back to Landing Page */}
+        {/* Back Button */}
         <div className="mb-6">
           <Button
             variant="outline"
@@ -144,7 +139,8 @@ const Dashboard = () => {
             <ArrowLeft size={16} /> Back to Landing
           </Button>
         </div>
-        {/* Welcome Section */}
+
+        {/* Welcome */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Welcome back, {user.firstName} {user.lastName}
@@ -154,7 +150,7 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-2">
@@ -207,7 +203,7 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Main Content */}
+        {/* Tabs */}
         <Tabs defaultValue="elections" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="elections">Elections</TabsTrigger>
@@ -216,9 +212,7 @@ const Dashboard = () => {
             <TabsTrigger value="receipts">Receipts</TabsTrigger>
           </TabsList>
 
-          {/* Elections Tab */}
           <TabsContent value="elections" className="space-y-6">
-            {/* Active Elections */}
             {activeElections.length > 0 && (
               <Card>
                 <CardHeader>
@@ -271,7 +265,6 @@ const Dashboard = () => {
               </Card>
             )}
 
-            {/* Upcoming Elections */}
             {upcomingElections.length > 0 && (
               <Card>
                 <CardHeader>
