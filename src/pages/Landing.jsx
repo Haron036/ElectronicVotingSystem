@@ -16,17 +16,17 @@ const Landing = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Link to="/login">
-              <Button variant="outline">Login</Button>
+              <Button variant="outline" className="hover:bg-green-600">Login</Button>
             </Link>
             <Link to="/register">
-              <Button>Register to Vote</Button>
+              <Button  variant="outline" className="hover:bg-green-600">Register to Vote</Button>
             </Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="bg-gradient-hero py-20 text-primary-foreground">
+      <section className="bg-gradient-hero  py-20 text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             Your Voice, Your Vote, Your Future
@@ -37,12 +37,12 @@ const Landing = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/register">
-              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+              <Button size="lg" variant="outline"  className="border-primary-foreground text-primary hover:bg-green-600">
                 Register as Voter
               </Button>
             </Link>
             <Link to="/results">
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-green-600">
                 View Results
               </Button>
             </Link>
@@ -242,7 +242,7 @@ const Landing = () => {
             </div>
           </div>
           <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
-            <p>&copy; 2024 E-VoteKE. Built for the people of Kenya.</p>
+            <p>&copy; 2025 E-VoteKE. Built for the people of Kenya by © Aron kipkirui Ngetich.</p>
           </div>
         </div>
       </footer>

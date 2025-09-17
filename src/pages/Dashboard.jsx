@@ -1,86 +1,108 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Button } from "../components/ui/button.jsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card.jsx";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card.jsx";
 import { Badge } from "../components/ui/badge.jsx";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs.jsx";
-import { Link } from "react-router-dom";
-import { 
-  Vote, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle, 
-  BarChart3, 
-  FileText, 
-  User, 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs.jsx";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Vote,
+  Clock,
+  CheckCircle,
+  AlertCircle,
   Settings,
   LogOut,
-  Bell
+  Bell,
+  ArrowLeft,
 } from "lucide-react";
 
-// Mock data - replace with API calls
-const mockElections = [
-  {
-    id: 1,
-    title: "2024 Presidential Election",
-    type: "PRESIDENTIAL",
-    status: "ACTIVE",
-    startDate: "2024-08-09T06:00:00Z",
-    endDate: "2024-08-09T18:00:00Z",
-    description: "Choose the next President of Kenya",
-    hasVoted: false,
-  },
-  {
-    id: 2,
-    title: "Nairobi County Governor",
-    type: "COUNTY",
-    status: "ACTIVE", 
-    startDate: "2024-08-09T06:00:00Z",
-    endDate: "2024-08-09T18:00:00Z",
-    description: "Choose the Governor for Nairobi County",
-    hasVoted: true,
-  },
-  {
-    id: 3,
-    title: "Member of Parliament - Westlands",
-    type: "PARLIAMENTARY",
-    status: "UPCOMING",
-    startDate: "2024-08-15T06:00:00Z",
-    endDate: "2024-08-15T18:00:00Z",
-    description: "Choose your MP for Westlands Constituency",
-    hasVoted: false,
-  },
-];
-
 const Dashboard = () => {
-  const [user] = useState({
-    name: "John Doe",
-    nationalId: "12345678",
-    county: "Nairobi",
-    constituency: "Westlands",
-    ward: "Parklands",
-    votesCount: 1,
-  });
+  const [user, setUser] = useState(null);
+  const [elections, setElections] = useState([]);
+  const navigate = useNavigate();
 
-  const activeElections = mockElections.filter(e => e.status === "ACTIVE");
-  const upcomingElections = mockElections.filter(e => e.status === "UPCOMING");
-  const completedElections = mockElections.filter(e => e.status === "COMPLETED");
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
+        // Fetch logged-in user
+        const userRes = await axios.get(
+          "http://localhost:8080/api/users/me",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUser(userRes.data);
+
+        // Fetch elections
+        const electionsRes = await axios.get(
+          "http://localhost:8080/api/elections",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setElections(electionsRes.data);
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
+
+  if (!user)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+
+  // Filter elections
+  const activeElections = elections.filter((e) => e.status === "ACTIVE");
+  const upcomingElections = elections.filter((e) => e.status === "UPCOMING");
+  const completedElections = elections.filter((e) => e.status === "COMPLETED");
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "ACTIVE": return "bg-success text-success-foreground";
-      case "UPCOMING": return "bg-warning text-warning-foreground";
-      case "COMPLETED": return "bg-muted text-muted-foreground";
-      default: return "bg-secondary text-secondary-foreground";
+      case "ACTIVE":
+        return "bg-green-500 text-white";
+      case "UPCOMING":
+        return "bg-yellow-500 text-white";
+      case "COMPLETED":
+        return "bg-gray-500 text-white";
+      default:
+        return "bg-blue-500 text-white";
     }
   };
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "PRESIDENTIAL": return "bg-accent text-accent-foreground";
-      case "PARLIAMENTARY": return "bg-secondary text-secondary-foreground";
-      case "COUNTY": return "bg-info text-info-foreground";
-      default: return "bg-muted text-muted-foreground";
+      case "PRESIDENTIAL":
+        return "bg-purple-500 text-white";
+      case "PARLIAMENTARY":
+        return "bg-blue-500 text-white";
+      case "COUNTY":
+        return "bg-indigo-500 text-white";
+      default:
+        return "bg-gray-400 text-white";
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   return (
@@ -93,7 +115,7 @@ const Dashboard = () => {
               <Vote className="h-8 w-8 text-accent" />
               <span className="text-2xl font-bold">E-VoteKE</span>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm">
                 <Bell className="h-4 w-4" />
@@ -101,7 +123,7 @@ const Dashboard = () => {
               <Button variant="ghost" size="sm">
                 <Settings className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4" />
                 Logout
               </Button>
@@ -111,10 +133,21 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+
+         {/* Back to Landing Page */}
+        <div className="mb-6">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft size={16} /> Back to Landing
+          </Button>
+        </div>
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back, {user.name}
+            Welcome back, {user.firstName} {user.lastName}
           </h1>
           <p className="text-muted-foreground">
             {user.constituency} Constituency, {user.county} County
@@ -130,7 +163,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-success">
+              <div className="text-2xl font-bold text-green-600">
                 {activeElections.length}
               </div>
             </CardContent>
@@ -144,7 +177,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-accent">
-                {user.votesCount}
+                {user.votesCount || 0}
               </div>
             </CardContent>
           </Card>
@@ -156,7 +189,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-warning">
+              <div className="text-2xl font-bold text-yellow-500">
                 {upcomingElections.length}
               </div>
             </CardContent>
@@ -169,9 +202,7 @@ const Dashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge className="bg-success text-success-foreground">
-                Verified
-              </Badge>
+              <Badge className="bg-green-500 text-white">Verified</Badge>
             </CardContent>
           </Card>
         </div>
@@ -192,7 +223,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-success" />
+                    <Clock className="h-5 w-5 text-green-500" />
                     Active Elections
                   </CardTitle>
                   <CardDescription>
@@ -201,7 +232,10 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {activeElections.map((election) => (
-                    <div key={election.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={election.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <div className="space-y-1">
                           <h3 className="font-semibold">{election.title}</h3>
@@ -218,24 +252,18 @@ const Dashboard = () => {
                           </Badge>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">
-                          Voting ends: {new Date(election.endDate).toLocaleString()}
+                          Voting ends:{" "}
+                          {new Date(election.endDate).toLocaleString()}
                         </div>
-                        {election.hasVoted ? (
-                          <div className="flex items-center gap-2 text-success">
-                            <CheckCircle className="h-4 w-4" />
-                            <span className="text-sm">Vote Cast</span>
-                          </div>
-                        ) : (
-                          <Link to={`/vote/${election.id}`}>
-                            <Button className="bg-accent hover:bg-accent/90">
-                              <Vote className="h-4 w-4 mr-2" />
-                              Vote Now
-                            </Button>
-                          </Link>
-                        )}
+                        <Link to={`/vote/${election.id}`}>
+                          <Button className="bg-accent hover:bg-accent/90">
+                            <Vote className="h-4 w-4 mr-2" />
+                            Vote Now
+                          </Button>
+                        </Link>
                       </div>
                     </div>
                   ))}
@@ -248,7 +276,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-warning" />
+                    <AlertCircle className="h-5 w-5 text-yellow-500" />
                     Upcoming Elections
                   </CardTitle>
                   <CardDescription>
@@ -257,7 +285,10 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {upcomingElections.map((election) => (
-                    <div key={election.id} className="border border-border rounded-lg p-4">
+                    <div
+                      key={election.id}
+                      className="border border-border rounded-lg p-4"
+                    >
                       <div className="flex items-start justify-between mb-3">
                         <div className="space-y-1">
                           <h3 className="font-semibold">{election.title}</h3>
@@ -274,9 +305,10 @@ const Dashboard = () => {
                           </Badge>
                         </div>
                       </div>
-                      
+
                       <div className="text-sm text-muted-foreground">
-                        Voting starts: {new Date(election.startDate).toLocaleString()}
+                        Voting starts:{" "}
+                        {new Date(election.startDate).toLocaleString()}
                       </div>
                     </div>
                   ))}
@@ -284,21 +316,10 @@ const Dashboard = () => {
               </Card>
             )}
           </TabsContent>
-
-          {/* Results, Profile, Receipts Tabs */}
-          {/* ...keep the rest of the JSX the same, removing TS types */}
         </Tabs>
       </div>
     </div>
   );
 };
-
-function Label({ className, children, ...props }) {
-  return (
-    <label className={`text-sm font-medium leading-none ${className || ""}`} {...props}>
-      {children}
-    </label>
-  );
-}
 
 export default Dashboard;
