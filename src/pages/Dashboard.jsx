@@ -150,7 +150,7 @@ const Dashboard = () => {
             Welcome back, {user.firstName} {user.lastName}
           </h1>
           <p className="text-muted-foreground">
-            {user.constituency} Constituency, {user.county} County
+            {user.constituency} County, {user.county} County
           </p>
         </div>
 
