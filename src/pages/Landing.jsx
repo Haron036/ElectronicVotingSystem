@@ -59,7 +59,7 @@ const Landing = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <Shield className="h-12 w-12 text-accent mb-4" />
                 <CardTitle>Bank-Grade Security</CardTitle>
@@ -69,7 +69,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <Users className="h-12 w-12 text-secondary mb-4" />
                 <CardTitle>Kenya Structure</CardTitle>
@@ -79,7 +79,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <BarChart3 className="h-12 w-12 text-info mb-4" />
                 <CardTitle>Real-Time Results</CardTitle>
@@ -89,7 +89,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <CheckCircle className="h-12 w-12 text-success mb-4" />
                 <CardTitle>Verified Voting</CardTitle>
@@ -99,7 +99,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <Lock className="h-12 w-12 text-warning mb-4" />
                 <CardTitle>Audit Trail</CardTitle>
@@ -109,7 +109,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="border-border hover:shadow-lg transition-all duration-300">
+            <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <Vote className="h-12 w-12 text-accent mb-4" />
                 <CardTitle>Accessible Anywhere</CardTitle>
@@ -157,7 +157,7 @@ const Landing = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center">
+            <Card className="text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
               <CardHeader>
                 <div className="mx-auto w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4">
                   <Vote className="h-8 w-8 text-accent" />
@@ -169,7 +169,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="text-center">
+            <Card className="text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
               <CardHeader>
                 <div className="mx-auto w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
                   <Users className="h-8 w-8 text-secondary" />
@@ -181,7 +181,7 @@ const Landing = () => {
               </CardHeader>
             </Card>
 
-            <Card className="text-center">
+            <Card className="text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
               <CardHeader>
                 <div className="mx-auto w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mb-4">
                   <BarChart3 className="h-8 w-8 text-success" />

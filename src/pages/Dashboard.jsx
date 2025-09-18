@@ -19,7 +19,6 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Vote,
   Clock,
-  CheckCircle,
   AlertCircle,
   Settings,
   LogOut,
@@ -42,13 +41,12 @@ const Dashboard = () => {
         }
 
         // Fetch logged-in user
-        const userRes = await axios.get(
-          "http://localhost:8080/api/users/me",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const userRes = await axios.get("http://localhost:8080/api/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setUser(userRes.data);
 
-        // Fetch elections with candidates
+        // Fetch elections
         const electionsRes = await axios.get(
           "http://localhost:8080/api/elections",
           { headers: { Authorization: `Bearer ${token}` } }
@@ -206,12 +204,13 @@ const Dashboard = () => {
         {/* Tabs */}
         <Tabs defaultValue="elections" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="elections">Elections</TabsTrigger>
-            <TabsTrigger value="results">Results</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="receipts">Receipts</TabsTrigger>
+            <TabsTrigger value="elections" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Elections</TabsTrigger>
+            <TabsTrigger value="results" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Results</TabsTrigger>
+            <TabsTrigger value="profile" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Profile</TabsTrigger>
+            <TabsTrigger value="receipts"className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Receipts</TabsTrigger>
           </TabsList>
 
+          {/* Elections Tab */}
           <TabsContent value="elections" className="space-y-6">
             {activeElections.length > 0 && (
               <Card>
@@ -246,7 +245,6 @@ const Dashboard = () => {
                           </Badge>
                         </div>
                       </div>
-
                       <div className="flex items-center justify-between">
                         <div className="text-sm text-muted-foreground">
                           Voting ends:{" "}
@@ -298,7 +296,6 @@ const Dashboard = () => {
                           </Badge>
                         </div>
                       </div>
-
                       <div className="text-sm text-muted-foreground">
                         Voting starts:{" "}
                         {new Date(election.startDate).toLocaleString()}
@@ -308,6 +305,90 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          {/* Results Tab */}
+          <TabsContent value="results">
+            <Card>
+              <CardHeader>
+                <CardTitle>Election Results</CardTitle>
+                <CardDescription>See past election outcomes.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {completedElections.length === 0 ? (
+                  <p>No results available yet.</p>
+                ) : (
+                  <div className="space-y-6">
+                    {completedElections.map((election) => {
+                      const maxVotes = Math.max(
+                        ...election.candidates.map((c) => c.votesCount)
+                      );
+                      return (
+                        <div
+                          key={election.id}
+                          className="border p-4 rounded-lg shadow-sm"
+                        >
+                          <h3 className="font-semibold text-lg mb-2">
+                            {election.title}
+                          </h3>
+                          <ul className="space-y-2">
+                            {election.candidates.map((candidate) => (
+                              <li
+                                key={candidate.id}
+                                className={`flex justify-between items-center border-b pb-1 ${
+                                  candidate.votesCount === maxVotes
+                                    ? "text-green-600 font-bold"
+                                    : ""
+                                }`}
+                              >
+                                <span>{candidate.name}</span>
+                                <span>{candidate.votesCount} votes</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Profile Tab */}
+          <TabsContent value="profile">
+            <Card>
+              <CardHeader>
+                <CardTitle>My Profile</CardTitle>
+                <CardDescription>Your voter details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>
+                  <strong>Name:</strong> {user.firstName} {user.lastName}
+                </p>
+                <p>
+                  <strong>County:</strong> {user.county}
+                </p>
+                <p>
+                  <strong>Constituency:</strong> {user.constituency}
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Receipts Tab */}
+          <TabsContent value="receipts">
+            <Card>
+              <CardHeader>
+                <CardTitle>Receipts</CardTitle>
+                <CardDescription>
+                  Your voting history receipts will appear here.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>No receipts available yet.</p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
