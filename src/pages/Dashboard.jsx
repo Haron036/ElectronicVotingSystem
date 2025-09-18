@@ -25,39 +25,53 @@ import {
   Bell,
   ArrowLeft,
 } from "lucide-react";
+import ReactCountryFlag from "react-country-flag";
+
+const API_URL = "http://localhost:8080/api";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [elections, setElections] = useState([]);
+  const [receipts, setReceipts] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          navigate("/login");
-          return;
-        }
-
-        // Fetch logged-in user
-        const userRes = await axios.get("http://localhost:8080/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(userRes.data);
-
-        // Fetch elections
-        const electionsRes = await axios.get(
-          "http://localhost:8080/api/elections",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setElections(electionsRes.data);
-      } catch (err) {
-        console.error("Error loading dashboard data:", err);
+  // ✅ reusable fetch function
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
       }
-    };
 
+      // user
+      const userRes = await axios.get(`${API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(userRes.data);
+
+      // elections
+      const electionsRes = await axios.get(`${API_URL}/elections`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setElections(electionsRes.data);
+
+      // receipts
+      const receiptsRes = await axios.get(`${API_URL}/votes/my-votes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setReceipts(receiptsRes.data);
+    } catch (err) {
+      console.error("Error loading dashboard data:", err);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
+
+    // 🔄 auto-refresh every 15s
+    const interval = setInterval(fetchData, 1000);
+    return () => clearInterval(interval);
   }, [navigate]);
 
   if (!user)
@@ -110,6 +124,11 @@ const Dashboard = () => {
           <div className="flex items-center space-x-2">
             <Vote className="h-8 w-8 text-accent" />
             <span className="text-2xl font-bold">E-VoteKE</span>
+            <ReactCountryFlag
+              countryCode="KE"
+              svg
+              style={{ width: "auto", height: "1.5rem" }}
+            />
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm">
@@ -171,7 +190,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-accent">
-                {user.votesCount || 0}
+                {receipts.length}
               </div>
             </CardContent>
           </Card>
@@ -204,10 +223,30 @@ const Dashboard = () => {
         {/* Tabs */}
         <Tabs defaultValue="elections" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="elections" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Elections</TabsTrigger>
-            <TabsTrigger value="results" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Results</TabsTrigger>
-            <TabsTrigger value="profile" className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Profile</TabsTrigger>
-            <TabsTrigger value="receipts"className="data-[state=active]:bg-green-500 data-[state=active]:text-white">Receipts</TabsTrigger>
+            <TabsTrigger
+              value="elections"
+              className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+            >
+              Elections
+            </TabsTrigger>
+            <TabsTrigger
+              value="results"
+              className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+            >
+              Results
+            </TabsTrigger>
+            <TabsTrigger
+              value="profile"
+              className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+            >
+              Profile
+            </TabsTrigger>
+            <TabsTrigger
+              value="receipts"
+              className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+            >
+              Receipts
+            </TabsTrigger>
           </TabsList>
 
           {/* Elections Tab */}
@@ -386,7 +425,34 @@ const Dashboard = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p>No receipts available yet.</p>
+                {receipts.length === 0 ? (
+                  <p>No receipts available yet.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {receipts.map((receipt) => (
+                      <li
+                        key={receipt.voteId}
+                        className="border p-3 rounded-lg shadow-sm"
+                      >
+                        <p>
+                          <strong>Election:</strong> {receipt.electionTitle}
+                        </p>
+                        <p>
+                          <strong>Candidate:</strong> {receipt.candidateName} (
+                          {receipt.candidateParty})
+                        </p>
+                        <p>
+                          <strong>Position:</strong>{" "}
+                          {receipt.candidatePosition}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          <strong>Voted At:</strong>{" "}
+                          {new Date(receipt.timestamp).toLocaleString()}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

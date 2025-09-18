@@ -19,9 +19,9 @@ export const createElection = (electionData, token) => {
   });
 };
 
-// Add candidate to election
+// ✅ Add candidate to election (returns updated election with candidates)
 export const addCandidate = (electionId, candidateData, token) => {
-  return axios.post(`${API_URL}/candidates/${electionId}`, candidateData, {
+  return axios.post(`${API_URL}/elections/${electionId}/candidates`, candidateData, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

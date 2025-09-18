@@ -20,10 +20,11 @@ const Voting = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // ✅ fetch user
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("token"); 
+        const token = localStorage.getItem("token");
         const res = await axios.get(`${API_URL}/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -35,47 +36,72 @@ const Voting = () => {
     fetchUser();
   }, []);
 
+  // ✅ fetch election (reusable so we can refresh)
+  const fetchElection = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API_URL}/elections/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setElection(res.data);
+      setCandidates(res.data.candidates || []);
+    } catch (err) {
+      console.error("Failed to fetch election:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchElection = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_URL}/elections/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setElection(res.data);
-        setCandidates(res.data.candidates || []);
-      } catch (err) {
-        console.error("Failed to fetch election:", err);
-      }
-    };
     fetchElection();
   }, [id]);
 
+  // ✅ handle vote
   const handleVoteSubmit = async () => {
     if (!selectedCandidate) {
-      toast({ title: "No candidate selected", description: "Please choose a candidate.", variant: "destructive" });
+      toast({
+        title: "No candidate selected",
+        description: "Please choose a candidate.",
+        variant: "destructive",
+      });
       return;
     }
     if (!user) {
-      toast({ title: "User not found", description: "Login required.", variant: "destructive" });
+      toast({
+        title: "User not found",
+        description: "Login required.",
+        variant: "destructive",
+      });
       return;
     }
 
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`${API_URL}/votes?userId=${user.id}`, {
-        electionId: election.id,
-        candidateId: selectedCandidate,
-      }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.post(
+        `${API_URL}/votes?userId=${user.id}`,
+        {
+          electionId: election.id,
+          candidateId: selectedCandidate,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-      toast({ title: "Vote Submitted", description: "Your vote has been recorded." });
-      navigate("/dashboard");
+      toast({
+        title: "Vote Submitted",
+        description: "Your vote has been recorded.",
+      });
+
+      // 🔄 Refresh election details so vote counts update instantly
+      await fetchElection();
+
+      // Optionally redirect after short delay
+      setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
       console.error("Vote submission error:", err);
       toast({
         title: "Vote Failed",
-        description: err.response?.data || "Something went wrong while submitting your vote.",
+        description:
+          err.response?.data ||
+          "Something went wrong while submitting your vote.",
         variant: "destructive",
       });
     } finally {
@@ -83,13 +109,22 @@ const Voting = () => {
     }
   };
 
-  if (!election) return <div className="flex items-center justify-center min-h-screen">Loading election details...</div>;
+  if (!election)
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Loading election details...
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <div className="mb-4">
-          <Button variant="outline" className="flex items-center gap-2" onClick={() => navigate("/dashboard")}>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => navigate("/dashboard")}
+          >
             <ArrowLeft size={16} /> Back to Dashboard
           </Button>
         </div>
@@ -103,13 +138,28 @@ const Voting = () => {
             <RadioGroup onValueChange={setSelectedCandidate}>
               {candidates.map((c) => (
                 <div key={c.id} className="flex items-center space-x-2 mb-3">
-                  <RadioGroupItem value={c.id.toString()} id={`candidate-${c.id}`} />
-                  <Label htmlFor={`candidate-${c.id}`}>{c.name} — <span className="text-sm text-muted-foreground">{c.party}</span></Label>
+                  <RadioGroupItem
+                    value={c.id.toString()}
+                    id={`candidate-${c.id}`}
+                  />
+                  <Label htmlFor={`candidate-${c.id}`}>
+                    {c.name} —{" "}
+                    <span className="text-sm text-muted-foreground">
+                      {c.party}
+                    </span>{" "}
+                    <span className="ml-2 text-xs text-green-600">
+                      {c.votesCount} votes
+                    </span>
+                  </Label>
                 </div>
               ))}
             </RadioGroup>
 
-            <Button onClick={handleVoteSubmit} className="w-full mt-6" disabled={isSubmitting}>
+            <Button
+              onClick={handleVoteSubmit}
+              className="w-full mt-6"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Submitting Vote..." : "Submit Vote"}
             </Button>
           </CardContent>
