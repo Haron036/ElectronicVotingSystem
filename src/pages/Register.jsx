@@ -18,16 +18,14 @@ import {
 } from "../components/ui/select.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { Vote, Eye, EyeOff } from "lucide-react";
-import { useToast } from "../hooks/use-toast.js";
-import { registerUser } from "../api.js"; // ✅ use your API layer
-
-const counties = [
-  "Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita-Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans-Nzoia", "Uasin Gishu", "Elgeyo-Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet"," Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira",  
-];
+import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
+import { registerUser } from "../api.js";
+import { countiesAndConstituencies } from "../data/counties.js";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  // ✅ Remove the useToast hook here since we are using react-hot-toast now
+  // const { toast } = useToast();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -57,20 +55,12 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Passwords do not match. Please try again."); // ✅ Use toast.error
       return;
     }
 
     if (!formData.acceptTerms) {
-      toast({
-        title: "Terms Required",
-        description: "You must accept the terms & conditions to continue.",
-        variant: "destructive",
-      });
+      toast.error("You must accept the terms & conditions to continue."); // ✅ Use toast.error
       return;
     }
 
@@ -83,7 +73,7 @@ const Register = () => {
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth, // yyyy-MM-dd format
+        dateOfBirth: formData.dateOfBirth,
         county: formData.county,
         constituency: formData.constituency,
         ward: formData.ward,
@@ -92,19 +82,12 @@ const Register = () => {
 
       await registerUser(payload);
 
-      toast({
-        title: "Registration Successful!",
-        description: "Your voter account has been created.",
-      });
+      toast.success("Registration Successful! Your voter account has been created."); // ✅ Use toast.success
 
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      toast({
-        title: "Registration Failed",
-        description: error.response?.data || "Something went wrong",
-        variant: "destructive",
-      });
+      toast.error(error.response?.data || "Something went wrong."); // ✅ Use toast.error
     } finally {
       setIsLoading(false);
     }
@@ -195,17 +178,42 @@ const Register = () => {
                   <Label>County</Label>
                   <Select
                     value={formData.county}
-                    onValueChange={(value) => handleInputChange("county", value)}
+                    onValueChange={(value) => {
+                      handleInputChange("county", value);
+                      handleInputChange("constituency", "");
+                    }}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select county" />
                     </SelectTrigger>
                     <SelectContent>
-                      {counties.map((county) => (
-                        <SelectItem key={county} value={county}>
-                          {county}
+                      {countiesAndConstituencies.map((c) => (
+                        <SelectItem key={c.county} value={c.county}>
+                          {c.county}
                         </SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="mb-4">
+                  <Label>Constituency</Label>
+                  <Select
+                    value={formData.constituency}
+                    onValueChange={(value) => handleInputChange("constituency", value)}
+                    disabled={!formData.county}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select constituency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {formData.county &&
+                        countiesAndConstituencies
+                          .find((c) => c.county === formData.county)
+                          ?.constituencies.map((constituency) => (
+                            <SelectItem key={constituency} value={constituency}>
+                              {constituency}
+                            </SelectItem>
+                          ))}
                     </SelectContent>
                   </Select>
                 </div>

@@ -26,6 +26,8 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
+import toast from "react-hot-toast";
+import { countiesAndConstituencies } from "../data/counties.js"; // ✅ Import the shared data
 
 const API_URL = "http://localhost:8080/api";
 
@@ -33,9 +35,16 @@ const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [elections, setElections] = useState([]);
   const [receipts, setReceipts] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    firstName: "",
+    lastName: "",
+    county: "",
+    constituency: "",
+  });
+
   const navigate = useNavigate();
 
-  // ✅ reusable fetch function
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -44,19 +53,16 @@ const Dashboard = () => {
         return;
       }
 
-      // user
       const userRes = await axios.get(`${API_URL}/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(userRes.data);
 
-      // elections
       const electionsRes = await axios.get(`${API_URL}/elections`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setElections(electionsRes.data);
 
-      // receipts
       const receiptsRes = await axios.get(`${API_URL}/votes/my-votes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -67,19 +73,31 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (!isEditing) {
+      fetchData();
+      const interval = setInterval(fetchData, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [navigate, isEditing]);
 
-    // 🔄 auto-refresh every 15s
-    const interval = setInterval(fetchData, 1000);
-    return () => clearInterval(interval);
-  }, [navigate]);
+  useEffect(() => {
+    if (user) {
+      setEditForm({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        county: user.county,
+        constituency: user.constituency,
+      });
+    }
+  }, [user]);
 
-  if (!user)
+  if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
       </div>
     );
+  }
 
   const activeElections = elections.filter((e) => e.status === "ACTIVE");
   const upcomingElections = elections.filter((e) => e.status === "UPCOMING");
@@ -116,6 +134,29 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  const handleProfileUpdate = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(`${API_URL}/users/me`, editForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUser(res.data);
+      setEditForm({
+        firstName: res.data.firstName,
+        lastName: res.data.lastName,
+        county: res.data.county,
+        constituency: res.data.constituency,
+      });
+
+      setIsEditing(false);
+      toast.success("Profile updated successfully!");
+    } catch (err) {
+      console.error("Error updating profile:", err);
+      toast.error("Failed to update profile. Please try again.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -131,12 +172,23 @@ const Dashboard = () => {
             />
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm">
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm">
+            <div className="relative">
+              <Button variant="ghost" size="sm">
+                <Bell className="h-4 w-4" />
+              </Button>
+              {upcomingElections.length > 0 && (
+                <span className="absolute top-1 right-1 block w-2 h-2 bg-red-500 rounded-full"></span>
+              )}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsEditing(!isEditing)}
+            >
               <Settings className="h-4 w-4" />
             </Button>
+
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4" />
               Logout
@@ -163,9 +215,10 @@ const Dashboard = () => {
             Welcome back, {user.firstName} {user.lastName}
           </h1>
           <p className="text-muted-foreground">
-            {user.constituency} County, {user.county} County
+            {user.constituency}, {user.county} County
           </p>
         </div>
+        
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -402,15 +455,117 @@ const Dashboard = () => {
                 <CardDescription>Your voter details</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>
-                  <strong>Name:</strong> {user.firstName} {user.lastName}
-                </p>
-                <p>
-                  <strong>County:</strong> {user.county}
-                </p>
-                <p>
-                  <strong>Constituency:</strong> {user.constituency}
-                </p>
+                {!isEditing ? (
+                  <>
+                    <p>
+                      <strong>Name:</strong> {user.firstName} {user.lastName}
+                    </p>
+                    <p>
+                      <strong>County:</strong> {user.county}
+                    </p>
+                    <p>
+                      <strong>Constituency:</strong> {user.constituency}
+                    </p>
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    {/* First Name */}
+                    <div>
+                      <label className="block text-sm font-medium">
+                        First Name
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.firstName}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            firstName: e.target.value,
+                          })
+                        }
+                        className="w-full border rounded p-2"
+                      />
+                    </div>
+
+                    {/* Last Name */}
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Last Name
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.lastName}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, lastName: e.target.value })
+                        }
+                        className="w-full border rounded p-2"
+                      />
+                    </div>
+
+                    {/* County Dropdown */}
+                    <div>
+                      <label className="block text-sm font-medium">
+                        County
+                      </label>
+                      <select
+                        value={editForm.county}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            county: e.target.value,
+                            constituency: "", // Reset constituency
+                          })
+                        }
+                        className="w-full border rounded p-2"
+                      >
+                        <option value="">Select County</option>
+                        {countiesAndConstituencies.map((c) => (
+                          <option key={c.county} value={c.county}>
+                            {c.county}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Constituency Dropdown */}
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Constituency
+                      </label>
+                      <select
+                        value={editForm.constituency}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            constituency: e.target.value,
+                          })
+                        }
+                        className="w-full border rounded p-2"
+                        disabled={!editForm.county}
+                      >
+                        <option value="">Select Constituency</option>
+                        {countiesAndConstituencies
+                          .find((c) => c.county === editForm.county)
+                          ?.constituencies.map((constituency) => (
+                            <option key={constituency} value={constituency}>
+                              {constituency}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    {/* Save + Cancel */}
+                    <div className="flex gap-4">
+                      <Button onClick={handleProfileUpdate}>Save</Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsEditing(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -420,35 +575,24 @@ const Dashboard = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Receipts</CardTitle>
-                <CardDescription>
-                  Your voting history receipts will appear here.
-                </CardDescription>
+                <CardDescription>Your voting history</CardDescription>
               </CardHeader>
               <CardContent>
                 {receipts.length === 0 ? (
-                  <p>No receipts available yet.</p>
+                  <p>You have not voted yet.</p>
                 ) : (
-                  <ul className="space-y-3">
+                  <ul className="space-y-2">
                     {receipts.map((receipt) => (
                       <li
-                        key={receipt.voteId}
-                        className="border p-3 rounded-lg shadow-sm"
+                        key={receipt.id}
+                        className="border-b pb-2 flex justify-between"
                       >
-                        <p>
-                          <strong>Election:</strong> {receipt.electionTitle}
-                        </p>
-                        <p>
-                          <strong>Candidate:</strong> {receipt.candidateName} (
-                          {receipt.candidateParty})
-                        </p>
-                        <p>
-                          <strong>Position:</strong>{" "}
-                          {receipt.candidatePosition}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          <strong>Voted At:</strong>{" "}
+                        <span>
+                          {receipt.electionTitle} – {receipt.candidateName}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
                           {new Date(receipt.timestamp).toLocaleString()}
-                        </p>
+                        </span>
                       </li>
                     ))}
                   </ul>

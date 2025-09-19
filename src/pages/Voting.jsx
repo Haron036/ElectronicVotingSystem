@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card.
 import { Button } from "../components/ui/button.jsx";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group.jsx";
 import { Label } from "../components/ui/label.jsx";
-import { useToast } from "../hooks/use-toast.js";
+import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 
@@ -17,10 +17,10 @@ const Voting = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState(null);
-  const { toast } = useToast();
+  // ✅ Remove the useToast hook
+  // const { toast } = useToast();
   const navigate = useNavigate();
 
-  // ✅ fetch user
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -36,7 +36,6 @@ const Voting = () => {
     fetchUser();
   }, []);
 
-  // ✅ fetch election (reusable so we can refresh)
   const fetchElection = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -54,22 +53,15 @@ const Voting = () => {
     fetchElection();
   }, [id]);
 
-  // ✅ handle vote
   const handleVoteSubmit = async () => {
     if (!selectedCandidate) {
-      toast({
-        title: "No candidate selected",
-        description: "Please choose a candidate.",
-        variant: "destructive",
-      });
+      // ✅ Use toast.error for validation
+      toast.error("Please choose a candidate.");
       return;
     }
     if (!user) {
-      toast({
-        title: "User not found",
-        description: "Login required.",
-        variant: "destructive",
-      });
+      // ✅ Use toast.error for authentication
+      toast.error("Login required.");
       return;
     }
 
@@ -85,36 +77,30 @@ const Voting = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      toast({
-        title: "Vote Submitted",
-        description: "Your vote has been recorded.",
-      });
+      // ✅ Use toast.success for a successful vote
+      toast.success("Vote Submitted! Your vote has been recorded.");
 
-      // 🔄 Refresh election details so vote counts update instantly
       await fetchElection();
-
-      // Optionally redirect after short delay
+      
       setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
       console.error("Vote submission error:", err);
-      toast({
-        title: "Vote Failed",
-        description:
-          err.response?.data ||
-          "Something went wrong while submitting your vote.",
-        variant: "destructive",
-      });
+      // ✅ Use toast.error for a failed vote submission
+      toast.error(
+        err.response?.data || "Something went wrong while submitting your vote."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!election)
+  if (!election) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         Loading election details...
       </div>
     );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
