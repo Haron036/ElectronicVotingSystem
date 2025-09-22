@@ -18,14 +18,12 @@ import {
 } from "../components/ui/select.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { Vote, Eye, EyeOff } from "lucide-react";
-import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
+import toast from "react-hot-toast";
 import { registerUser } from "../api.js";
 import { countiesAndConstituencies } from "../data/counties.js";
 
 const Register = () => {
   const navigate = useNavigate();
-  // ✅ Remove the useToast hook here since we are using react-hot-toast now
-  // const { toast } = useToast();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -55,12 +53,12 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match. Please try again."); // ✅ Use toast.error
+      toast.error("Passwords do not match. Please try again.");
       return;
     }
 
     if (!formData.acceptTerms) {
-      toast.error("You must accept the terms & conditions to continue."); // ✅ Use toast.error
+      toast.error("You must accept the terms & conditions to continue.");
       return;
     }
 
@@ -80,14 +78,17 @@ const Register = () => {
         password: formData.password,
       };
 
+      // ✅ Call backend endpoint correctly
       await registerUser(payload);
 
-      toast.success("Registration Successful! Your voter account has been created."); // ✅ Use toast.success
+      toast.success("Registration Successful! Redirecting to login...");
 
       navigate("/login");
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error(error.response?.data || "Something went wrong."); // ✅ Use toast.error
+      toast.error(
+        error.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -103,9 +104,7 @@ const Register = () => {
           <div className="flex items-center justify-center mb-2">
             <Vote className="w-10 h-10 text-blue-600" />
           </div>
-          <CardTitle className="text-center text-xl">
-            Create Your Account
-          </CardTitle>
+          <CardTitle className="text-center text-xl">Create Your Account</CardTitle>
           <CardDescription className="text-center">
             Step {currentStep} of 3
           </CardDescription>
