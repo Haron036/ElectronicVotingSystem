@@ -15,7 +15,6 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Use AllowedOriginPatterns to handle minor URL differences (like trailing slash)
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:5173",
                 "https://electronicvotingkenya-frontend.onrender.com"
@@ -25,9 +24,8 @@ public class CorsConfig {
                 "GET", "POST", "PUT", "DELETE", "OPTIONS"
         ));
 
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization", "Content-Type"
-        ));
+        // ✅ Allow all headers
+        configuration.addAllowedHeader("*");
 
         configuration.setAllowCredentials(true);
 
