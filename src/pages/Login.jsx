@@ -14,7 +14,7 @@ import { Vote, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
 import axios from "axios";
 
-const API_URL = "https://electronicvotingkenya.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
