@@ -8,7 +8,7 @@ import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://electronicvotingkenya.onrender.com";
 
 const Voting = () => {
   const { id } = useParams();

@@ -29,7 +29,7 @@ import ReactCountryFlag from "react-country-flag";
 import toast from "react-hot-toast";
 import { countiesAndConstituencies } from "../data/counties.js"; // ✅ Import the shared data
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = "https://electronicvotingkenya.onrender.com";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
