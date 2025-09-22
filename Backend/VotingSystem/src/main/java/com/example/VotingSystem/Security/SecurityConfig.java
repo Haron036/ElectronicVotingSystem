@@ -14,20 +14,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource; // Added import
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
-@EnableWebSecurity // Added this annotation
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtUtils jwtUtils;
-    private final CorsConfigurationSource corsConfigurationSource; // Added for explicit CORS injection
+    private final CorsConfigurationSource corsConfigurationSource;
 
     public SecurityConfig(CustomUserDetailsService uds, JwtUtils jwtUtils, CorsConfigurationSource corsConfigurationSource) {
         this.userDetailsService = uds;
         this.jwtUtils = jwtUtils;
-        this.corsConfigurationSource = corsConfigurationSource; // Injected the bean
+        this.corsConfigurationSource = corsConfigurationSource;
     }
 
     @Bean
@@ -50,15 +50,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource)) // Updated CORS configuration
-                .csrf(csrf -> csrf.disable()) // Updated CSRF configuration
-                .exceptionHandling(exceptionHandling -> exceptionHandling.and()) // Updated exception handling
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Updated session management
-                .authorizeHttpRequests(authorize -> authorize
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**", "/actuator/**", "/health").permitAll()
                         .anyRequest().authenticated()
                 );
+
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
