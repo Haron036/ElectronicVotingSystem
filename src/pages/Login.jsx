@@ -11,17 +11,13 @@ import { Input } from "../components/ui/input.jsx";
 import { Label } from "../components/ui/label.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { Vote, Eye, EyeOff } from "lucide-react";
-import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import toast from "react-hot-toast";
+import { loginUser } from "../api.js";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ nationalId: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  // ✅ Remove the useToast hook since we're using react-hot-toast
-  // const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleInputChange = (field, value) => {
@@ -33,22 +29,24 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, {
+      const res = await loginUser({
         nationalId: formData.nationalId,
         password: formData.password,
       });
 
+      // Save token and user in localStorage
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify(res.data));
 
-      // ✅ Use toast.success for a successful login
-      toast.success("Login Successful! Redirecting to your dashboard...");
+      toast.success("Login Successful! Redirecting...");
 
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
-      // ✅ Use toast.error for a failed login attempt
-      toast.error(error.response?.data?.message || "Invalid credentials. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Invalid credentials. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
