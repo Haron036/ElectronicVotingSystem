@@ -50,13 +50,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(c -> c.configurationSource(corsConfigurationSource)).csrf().disable()
-                .exceptionHandling().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/auth/**", "/actuator/**", "/health").permitAll()
-                .anyRequest().authenticated();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource)) // Updated CORS configuration
+                .csrf(csrf -> csrf.disable()) // Updated CSRF configuration
+                .exceptionHandling(exceptionHandling -> exceptionHandling.and()) // Updated exception handling
+                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Updated session management
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/actuator/**", "/health").permitAll()
+                        .anyRequest().authenticated()
+                );
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
