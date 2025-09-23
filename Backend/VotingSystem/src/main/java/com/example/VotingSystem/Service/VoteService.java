@@ -11,6 +11,9 @@ import com.example.VotingSystem.Repositories.UserRepository;
 import com.example.VotingSystem.Repositories.VoteRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +24,12 @@ public class VoteService {
     private final UserRepository userRepository;
     private final ElectionRepository electionRepository;
     private final CandidateRepository candidateRepository;
+
+    private OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
+        if (localDateTime == null) return null;
+        return localDateTime.atOffset(ZoneOffset.UTC); // Or ZoneOffset.ofHours(3) for EAT
+    }
+
 
     public VoteService(VoteRepository voteRepository,
                        UserRepository userRepository,
@@ -81,7 +90,7 @@ public class VoteService {
                         vote.getCandidate().getName(),
                         vote.getCandidate().getParty(),
                         vote.getCandidate().getPosition(), // ✅
-                        vote.getTimestamp()
+                        toOffsetDateTime(vote.getTimestamp())
                 ))
                 .collect(Collectors.toList());
     }
