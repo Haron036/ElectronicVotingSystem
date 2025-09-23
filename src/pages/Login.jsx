@@ -24,33 +24,39 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Basic validation
+  if (!formData.nationalId.trim() || !formData.password.trim()) {
+    toast.error("Please enter both National ID and Password.");
+    return;
+  }
 
-    try {
-      const res = await loginUser({
-        nationalId: formData.nationalId,
-        password: formData.password,
-      });
+  setIsLoading(true);
 
-      // Save token and user in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data));
+  try {
+    const res = await loginUser({
+      nationalId: formData.nationalId,
+      password: formData.password,
+    });
 
-      toast.success("Login Successful! Redirecting...");
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("user", JSON.stringify(res.data));
 
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Invalid credentials. Please try again."
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    toast.success("Login Successful! Redirecting...");
+
+    navigate("/dashboard");
+  } catch (error) {
+    console.error("Login error:", error);
+    toast.error(
+      error.response?.data?.message || "Invalid credentials. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
