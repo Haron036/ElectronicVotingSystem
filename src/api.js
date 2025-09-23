@@ -1,14 +1,18 @@
-// api.js
 import axios from "axios";
+
 const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 const api = axios.create({
   baseURL: API_URL,
 });
 
-// 🔹 Log all requests
+// Add token to requests if stored
 api.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     console.log("➡️ Request:", {
       url: config.url,
       method: config.method,
@@ -23,7 +27,7 @@ api.interceptors.request.use(
   }
 );
 
-// 🔹 Log all responses
+// Log responses and errors
 api.interceptors.response.use(
   (response) => {
     console.log("✅ Response:", {
@@ -47,30 +51,22 @@ api.interceptors.response.use(
   }
 );
 
-// ---------- API calls ----------
-
-// Auth
+// Auth API calls
 export const registerUser = (userData) => api.post("/auth/register", userData);
 export const loginUser = (credentials) => api.post("/auth/login", credentials);
 
-// Elections
-export const createElection = (electionData, token) =>
-  api.post("/elections", electionData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// Elections API calls
+export const createElection = (electionData) =>
+  api.post("/elections", electionData);
 
-export const addCandidate = (electionId, candidateData, token) =>
-  api.post(`/elections/${electionId}/candidates`, candidateData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const addCandidate = (electionId, candidateData) =>
+  api.post(`/elections/${electionId}/candidates`, candidateData);
 
-// Votes
-export const castVote = (userId, voteData, token) =>
-  api.post(`/votes?userId=${userId}`, voteData, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+// Votes API calls
+export const castVote = (userId, voteData) =>
+  api.post(`/votes?userId=${userId}`, voteData);
 
-export const countVotes = (candidateId, token) =>
-  api.get(`/votes/count/${candidateId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export const countVotes = (candidateId) =>
+  api.get(`/votes/count/${candidateId}`);
+
+export default api;
