@@ -49,15 +49,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(req.getNationalId(), req.getPassword())
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(req.getNationalId(), req.getPassword())
+            );
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String jwt = jwtUtils.generateToken(userDetails);
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            String jwt = jwtUtils.generateToken(userDetails);
 
-        User u = userDetails.getUser();
-        AuthResponse res = new AuthResponse(jwt, u.getId(), u.getFirstName(), u.getLastName(), u.getNationalId(), u.getEmail());
-        return ResponseEntity.ok(res);
+            User u = userDetails.getUser();
+            AuthResponse res = new AuthResponse(jwt, u.getId(), u.getFirstName(), u.getLastName(), u.getNationalId(), u.getEmail());
+            return ResponseEntity.ok(res);
+        } catch (Exception ex) {
+            return ResponseEntity.status(403).body("Invalid national ID or password");
+        }
     }
+
 }
