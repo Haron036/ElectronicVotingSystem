@@ -18,7 +18,7 @@ public class CorsConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // ➡️ Define the allowed origins for your front-end application
-        configuration.setAllowedOrigins(List.of("https://electronicvotingkenya-frontend.onrender.com"));
+        configuration.setAllowedOrigins(List.of("https://electronicvotingkenya-frontend.onrender.com", "http://localhost:5173"));
         // ⚠️ For development or temporary testing, you can use: configuration.setAllowedOrigins(List.of("*"));
         // ⚠️ But for production, always specify the exact origin.
 
