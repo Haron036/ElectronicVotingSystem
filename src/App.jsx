@@ -1,5 +1,5 @@
 import React from "react";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import { Toaster as Sonner } from "./components/ui/sonner.jsx";
 import { TooltipProvider } from "./components/ui/tooltip.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -15,8 +15,6 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-
-    
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
@@ -28,17 +26,13 @@ function App() {
             <Route path="/auth/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/vote/:id" element={<Voting />} />
-
-            
+            {/* Catch-all route for non-existent paths */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
-
-    
   );
-  
 }
 
 export default App;
