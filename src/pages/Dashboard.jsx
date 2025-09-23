@@ -1,4 +1,4 @@
- import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api.js"; // Use configured axios instance with interceptors
 import { Button } from "../components/ui/button.jsx";
 import {
@@ -73,7 +73,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!isEditing) {
       fetchData();
-      
+
       // const interval = setInterval(fetchData, 10000);
       // return () => clearInterval(interval);
     }
@@ -105,24 +105,23 @@ const Dashboard = () => {
       </div>
     );
   }
-const now = new Date();
+  const now = new Date();
 
-const activeElections = elections.filter((e) => {
-  const start = new Date(e.startDate);
-  const end = new Date(e.endDate);
-  return now >= start && now <= end;
-});
+  const activeElections = elections.filter((e) => {
+    const start = new Date(e.startDate);
+    const end = new Date(e.endDate);
+    return now >= start && now <= end;
+  });
 
-const upcomingElections = elections.filter((e) => {
-  const start = new Date(e.startDate);
-  return now < start;
-});
+  const upcomingElections = elections.filter((e) => {
+    const start = new Date(e.startDate);
+    return now < start;
+  });
 
-const completedElections = elections.filter((e) => {
-  const end = new Date(e.endDate);
-  return now > end;
-});
-
+  const completedElections = elections.filter((e) => {
+    const end = new Date(e.endDate);
+    return now > end;
+  });
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -173,7 +172,7 @@ const completedElections = elections.filter((e) => {
     }
   };
 
- return (
+  return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -423,50 +422,66 @@ const completedElections = elections.filter((e) => {
 
           {/* Results Tab */}
 
-<TabsContent value="results">
-    <Card>
-      <CardHeader>
-        <CardTitle>Election Results</CardTitle>
-        <CardDescription>See past election outcomes.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {completedElections.length === 0 ? (
-          <p>No completed elections available yet.</p>
-        ) : (
-          completedElections.map((election) => {
-            const hasVotes = election.candidates.some(c => c.votesCount > 0);
-            if (!hasVotes) {
-              return (
-                <div key={election.id} className="mb-4 p-4 border rounded">
-                  <h3 className="font-semibold text-lg mb-2">{election.title}</h3>
-                  <p>No votes have been cast for this election yet.</p>
-                </div>
-              );
-            }
-            const maxVotes = Math.max(...election.candidates.map(c => c.votesCount));
-            return (
-              <div key={election.id} className="border p-4 rounded-lg shadow-sm mb-6">
-                <h3 className="font-semibold text-lg mb-2">{election.title}</h3>
-                <ul className="space-y-2">
-                  {election.candidates.map((candidate) => (
-                    <li
-                      key={candidate.id}
-                      className={`flex justify-between items-center border-b pb-1 ${
-                        candidate.votesCount === maxVotes ? "text-green-600 font-bold" : ""
-                      }`}
-                    >
-                      <span>{candidate.name}</span>
-                      <span>{candidate.votesCount} votes</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })
-        )}
-      </CardContent>
-    </Card>
-  </TabsContent>
+          <TabsContent value="results">
+            <Card>
+              <CardHeader>
+                <CardTitle>Election Results</CardTitle>
+                <CardDescription>See past election outcomes.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {completedElections.length === 0 ? (
+                  <p>No completed elections available yet.</p>
+                ) : (
+                  completedElections.map((election) => {
+                    const hasVotes = election.candidates.some(
+                      (c) => c.votesCount > 0
+                    );
+                    if (!hasVotes) {
+                      return (
+                        <div
+                          key={election.id}
+                          className="mb-4 p-4 border rounded"
+                        >
+                          <h3 className="font-semibold text-lg mb-2">
+                            {election.title}
+                          </h3>
+                          <p>No votes have been cast for this election yet.</p>
+                        </div>
+                      );
+                    }
+                    const maxVotes = Math.max(
+                      ...election.candidates.map((c) => c.votesCount)
+                    );
+                    return (
+                      <div
+                        key={election.id}
+                        className="border p-4 rounded-lg shadow-sm mb-6"
+                      >
+                        <h3 className="font-semibold text-lg mb-2">
+                          {election.title}
+                        </h3>
+                        <ul className="space-y-2">
+                          {election.candidates.map((candidate) => (
+                            <li
+                              key={candidate.id}
+                              className={`flex justify-between items-center border-b pb-1 ${
+                                candidate.votesCount === maxVotes
+                                  ? "text-green-600 font-bold"
+                                  : ""
+                              }`}
+                            >
+                              <span>{candidate.name}</span>
+                              <span>{candidate.votesCount} votes</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Profile Tab */}
           <TabsContent value="profile">
