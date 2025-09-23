@@ -1,6 +1,7 @@
 package com.example.VotingSystem.DTOs;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class VoteResponse {
     private Long voteId;
@@ -11,7 +12,7 @@ public class VoteResponse {
     private String candidateName;
     private String candidateParty;
     private String candidatePosition; // ✅ new field
-    private LocalDateTime timestamp;
+    private OffsetDateTime timestamp;
 
     public VoteResponse(
             Long voteId,
@@ -22,7 +23,7 @@ public class VoteResponse {
             String candidateName,
             String candidateParty,
             String candidatePosition,
-            LocalDateTime timestamp
+            OffsetDateTime timestamp
     ) {
         this.voteId = voteId;
         this.userId = userId;
@@ -44,5 +45,7 @@ public class VoteResponse {
     public String getCandidateName() { return candidateName; }
     public String getCandidateParty() { return candidateParty; }
     public String getCandidatePosition() { return candidatePosition; }
-    public LocalDateTime getTimestamp() { return timestamp; }
+    public OffsetDateTime getTimestamp() {
+        return timestamp;
+    }
 }

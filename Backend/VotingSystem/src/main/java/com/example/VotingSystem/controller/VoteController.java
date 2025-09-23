@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @RestController
@@ -33,6 +36,9 @@ public class VoteController {
                 request.getCandidateId()
         );
 
+        LocalDateTime localDateTime = vote.getTimestamp();
+        OffsetDateTime offsetDateTime = localDateTime.atOffset(ZoneOffset.UTC);
+
         VoteResponse response = new VoteResponse(
                 vote.getId(),
                 vote.getUser().getId(),
@@ -42,7 +48,7 @@ public class VoteController {
                 vote.getCandidate().getName(),
                 vote.getCandidate().getParty(),
                 vote.getCandidate().getPosition(), // ✅
-                vote.getTimestamp()
+                offsetDateTime
         );
 
         return ResponseEntity.ok(response);
