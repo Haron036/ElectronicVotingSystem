@@ -4,11 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card.
 import { Button } from "../components/ui/button.jsx";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group.jsx";
 import { Label } from "../components/ui/label.jsx";
-import toast from "react-hot-toast"; // ✅ Import toast from react-hot-toast
-import axios from "axios";
+import toast from "react-hot-toast";
+import api from "../api.js"; // Using your configured axios instance
 import { ArrowLeft } from "lucide-react";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 const Voting = () => {
   const { id } = useParams();
@@ -17,75 +15,62 @@ const Voting = () => {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [user, setUser] = useState(null);
-  // ✅ Remove the useToast hook
-  // const { toast } = useToast();
+  const [loading, setLoading] = useState(true); // Loading state for election and user data
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_URL}/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(res.data);
+        const userRes = await api.get("/users/me");
+        setUser(userRes.data);
+
+        const electionRes = await api.get(`/elections/${id}`);
+        setElection(electionRes.data);
+        setCandidates(electionRes.data.candidates || []);
       } catch (err) {
-        console.error("Failed to fetch user:", err);
+        console.error("Failed to fetch data:", err);
+        toast.error("Failed to load election or user data");
+        if (err.response?.status === 403) {
+          localStorage.removeItem("token");
+          toast.error("Session expired. Please login again.");
+          navigate("/auth/login");
+        }
+      } finally {
+        setLoading(false);
       }
     };
-    fetchUser();
-  }, []);
 
-  const fetchElection = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/elections/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setElection(res.data);
-      setCandidates(res.data.candidates || []);
-    } catch (err) {
-      console.error("Failed to fetch election:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchElection();
-  }, [id]);
+    fetchData();
+  }, [id, navigate]);
 
   const handleVoteSubmit = async () => {
     if (!selectedCandidate) {
-      // ✅ Use toast.error for validation
       toast.error("Please choose a candidate.");
       return;
     }
     if (!user) {
-      // ✅ Use toast.error for authentication
       toast.error("Login required.");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_URL}/votes?userId=${user.id}`,
-        {
-          electionId: election.id,
-          candidateId: selectedCandidate,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.post(`/votes?userId=${user.id}`, {
+        electionId: election.id,
+        candidateId: selectedCandidate,
+      });
 
-      // ✅ Use toast.success for a successful vote
       toast.success("Vote Submitted! Your vote has been recorded.");
 
-      await fetchElection();
-      
+      // Refresh election data to update vote counts
+      const electionRes = await api.get(`/elections/${id}`);
+      setElection(electionRes.data);
+      setCandidates(electionRes.data.candidates || []);
+
       setTimeout(() => navigate("/dashboard"), 1200);
     } catch (err) {
       console.error("Vote submission error:", err);
-      // ✅ Use toast.error for a failed vote submission
       toast.error(
         err.response?.data || "Something went wrong while submitting your vote."
       );
@@ -94,10 +79,18 @@ const Voting = () => {
     }
   };
 
-  if (!election) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         Loading election details...
+      </div>
+    );
+  }
+
+  if (!election) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        Election not found.
       </div>
     );
   }
@@ -121,7 +114,7 @@ const Voting = () => {
             <p className="text-muted-foreground">{election.description}</p>
           </CardHeader>
           <CardContent>
-            <RadioGroup onValueChange={setSelectedCandidate}>
+            <RadioGroup onValueChange={setSelectedCandidate} value={selectedCandidate}>
               {candidates.map((c) => (
                 <div key={c.id} className="flex items-center space-x-2 mb-3">
                   <RadioGroupItem
