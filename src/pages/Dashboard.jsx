@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+ import { useEffect, useState } from "react";
+import api from "../api.js"; // Use configured axios instance with interceptors
 import { Button } from "../components/ui/button.jsx";
 import {
   Card,
@@ -27,15 +27,14 @@ import {
 } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import toast from "react-hot-toast";
-import { countiesAndConstituencies } from "../data/counties.js"; // ✅ Import the shared data
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { countiesAndConstituencies } from "../data/counties.js";
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [elections, setElections] = useState([]);
   const [receipts, setReceipts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editForm, setEditForm] = useState({
     firstName: "",
     lastName: "",
@@ -47,35 +46,36 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
-      if (!token) {
-        navigate("/auth/login");
-        return;
-      }
-
-      const userRes = await axios.get(`${API_URL}/users/me`, {});
+      const userRes = await api.get("/users/me");
       setUser(userRes.data);
 
-      const electionsRes = await axios.get(`${API_URL}/elections`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const electionsRes = await api.get("/elections");
       setElections(electionsRes.data);
 
-      const receiptsRes = await axios.get(`${API_URL}/votes/my-votes`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const receiptsRes = await api.get("/votes/my-votes");
       setReceipts(receiptsRes.data);
+
+      setLoading(false);
     } catch (err) {
       console.error("Error loading dashboard data:", err);
+      setLoading(false);
+
+      if (err.response?.status === 403) {
+        localStorage.removeItem("token");
+        toast.error("Session expired. Please login again.");
+        navigate("/auth/login");
+      } else {
+        toast.error("Failed to load data. Please try again later.");
+      }
     }
   };
 
   useEffect(() => {
     if (!isEditing) {
       fetchData();
-      const interval = setInterval(fetchData, 1000);
-      return () => clearInterval(interval);
+      // If you want refresh, uncomment below with caution on interval duration
+      // const interval = setInterval(fetchData, 10000);
+      // return () => clearInterval(interval);
     }
   }, [navigate, isEditing]);
 
@@ -90,13 +90,22 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
       </div>
     );
   }
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Failed to load user data.
+      </div>
+    );
+  }
+
 
   const activeElections = elections.filter((e) => e.status === "ACTIVE");
   const upcomingElections = elections.filter((e) => e.status === "UPCOMING");
@@ -135,11 +144,7 @@ const Dashboard = () => {
 
   const handleProfileUpdate = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.put(`${API_URL}/users/me`, editForm, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const res = await api.put("/users/me", editForm);
       setUser(res.data);
       setEditForm({
         firstName: res.data.firstName,
@@ -147,7 +152,6 @@ const Dashboard = () => {
         county: res.data.county,
         constituency: res.data.constituency,
       });
-
       setIsEditing(false);
       toast.success("Profile updated successfully!");
     } catch (err) {
@@ -155,8 +159,7 @@ const Dashboard = () => {
       toast.error("Failed to update profile. Please try again.");
     }
   };
-
-  return (
+ return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
