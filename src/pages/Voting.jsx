@@ -72,7 +72,7 @@ const Voting = () => {
     } catch (err) {
       console.error("Vote submission error:", err);
       toast.error(
-        err.response?.data || "Something went wrong while submitting your vote."
+        err.response?.data || "You can only vote once."
       );
     } finally {
       setIsSubmitting(false);
