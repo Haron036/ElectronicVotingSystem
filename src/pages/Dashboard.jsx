@@ -48,14 +48,13 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);
       if (!token) {
-        navigate("/login");
+        navigate("/auth/login");
         return;
       }
 
-      const userRes = await axios.get(`${API_URL}/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const userRes = await axios.get(`${API_URL}/users/me`, {});
       setUser(userRes.data);
 
       const electionsRes = await axios.get(`${API_URL}/elections`, {
@@ -172,21 +171,21 @@ const Dashboard = () => {
             />
           </div>
           <div className="flex items-center space-x-4">
-           <div className="relative">
-  <Button variant="ghost" size="sm">
-    <Bell className="h-4 w-4" />
-  </Button>
+            <div className="relative">
+              <Button variant="ghost" size="sm">
+                <Bell className="h-4 w-4" />
+              </Button>
 
-  {/* Green dot for active elections */}
-  {activeElections.length > 0 && (
-    <span className="absolute top-1 right-1 block w-2 h-2 bg-green-500 rounded-full"></span>
-  )}
+              {/* Green dot for active elections */}
+              {activeElections.length > 0 && (
+                <span className="absolute top-1 right-1 block w-2 h-2 bg-green-500 rounded-full"></span>
+              )}
 
-  {/* Red dot for upcoming elections */}
-  {upcomingElections.length > 0 && (
-    <span className="absolute top-1 right-4 block w-2 h-2 bg-red-500 rounded-full"></span>
-  )}
-</div>
+              {/* Red dot for upcoming elections */}
+              {upcomingElections.length > 0 && (
+                <span className="absolute top-1 right-4 block w-2 h-2 bg-red-500 rounded-full"></span>
+              )}
+            </div>
 
             <Button
               variant="ghost"
@@ -225,7 +224,6 @@ const Dashboard = () => {
             {user.constituency}, {user.county} County
           </p>
         </div>
-        
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
