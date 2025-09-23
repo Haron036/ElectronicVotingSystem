@@ -212,8 +212,8 @@ const Landing = () => {
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-primary-foreground/80">
-                <li><Link to="/register" className="hover:text-primary-foreground">Register</Link></li>
-                <li><Link to="/login" className="hover:text-primary-foreground">Login</Link></li>
+                <li><Link to="/auth/register" className="hover:text-primary-foreground">Register</Link></li>
+                <li><Link to="/auth/login" className="hover:text-primary-foreground">Login</Link></li>
                 <li><Link to="/results" className="hover:text-primary-foreground">Results</Link></li>
                 <li><Link to="/audit" className="hover:text-primary-foreground">Audit Trail</Link></li>
               </ul>

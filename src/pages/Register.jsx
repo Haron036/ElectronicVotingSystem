@@ -83,7 +83,7 @@ const Register = () => {
 
       toast.success("Registration Successful! Redirecting to login...");
 
-      navigate("/login");
+      navigate("/auth/login");
     } catch (error) {
       console.error("Registration error:", error);
       toast.error(
@@ -285,7 +285,7 @@ const Register = () => {
 
           <p className="text-center mt-4 text-sm">
             Already registered?{" "}
-            <Link to="/login" className="text-blue-600">
+            <Link to="/auth/login" className="text-blue-600">
               Login here
             </Link>
           </p>
