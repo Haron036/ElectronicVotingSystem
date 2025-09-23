@@ -13,10 +13,10 @@ const Landing = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2"> <Vote className="h-8 w-8 text-accent" /> <span className="text-2xl font-bold text-foreground">E-VoteKE</span> <ReactCountryFlag countryCode="KE" svg style={{ width: 'auto', height: '1.5rem', }} /> </div>
           <div className="flex items-center space-x-4">
-            <Link to="/login">
+            <Link to="/auth/login">
               <Button variant="outline" className="hover:bg-green-600">Login</Button>
             </Link>
-            <Link to="/register">
+            <Link to="/auth/register">
               <Button  variant="outline" className="hover:bg-green-600">Register to Vote</Button>
             </Link>
           </div>
