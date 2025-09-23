@@ -422,52 +422,51 @@ const completedElections = elections.filter((e) => {
           </TabsContent>
 
           {/* Results Tab */}
-          <TabsContent value="results">
-            <Card>
-              <CardHeader>
-                <CardTitle>Election Results</CardTitle>
-                <CardDescription>See past election outcomes.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {completedElections.length === 0 ? (
-                  <p>No results available yet.</p>
-                ) : (
-                  <div className="space-y-6">
-                    {completedElections.map((election) => {
-                      const maxVotes = Math.max(
-                        ...election.candidates.map((c) => c.votesCount)
-                      );
-                      return (
-                        <div
-                          key={election.id}
-                          className="border p-4 rounded-lg shadow-sm"
-                        >
-                          <h3 className="font-semibold text-lg mb-2">
-                            {election.title}
-                          </h3>
-                          <ul className="space-y-2">
-                            {election.candidates.map((candidate) => (
-                              <li
-                                key={candidate.id}
-                                className={`flex justify-between items-center border-b pb-1 ${
-                                  candidate.votesCount === maxVotes
-                                    ? "text-green-600 font-bold"
-                                    : ""
-                                }`}
-                              >
-                                <span>{candidate.name}</span>
-                                <span>{candidate.votesCount} votes</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+
+<TabsContent value="results">
+    <Card>
+      <CardHeader>
+        <CardTitle>Election Results</CardTitle>
+        <CardDescription>See past election outcomes.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {completedElections.length === 0 ? (
+          <p>No completed elections available yet.</p>
+        ) : (
+          completedElections.map((election) => {
+            const hasVotes = election.candidates.some(c => c.votesCount > 0);
+            if (!hasVotes) {
+              return (
+                <div key={election.id} className="mb-4 p-4 border rounded">
+                  <h3 className="font-semibold text-lg mb-2">{election.title}</h3>
+                  <p>No votes have been cast for this election yet.</p>
+                </div>
+              );
+            }
+            const maxVotes = Math.max(...election.candidates.map(c => c.votesCount));
+            return (
+              <div key={election.id} className="border p-4 rounded-lg shadow-sm mb-6">
+                <h3 className="font-semibold text-lg mb-2">{election.title}</h3>
+                <ul className="space-y-2">
+                  {election.candidates.map((candidate) => (
+                    <li
+                      key={candidate.id}
+                      className={`flex justify-between items-center border-b pb-1 ${
+                        candidate.votesCount === maxVotes ? "text-green-600 font-bold" : ""
+                      }`}
+                    >
+                      <span>{candidate.name}</span>
+                      <span>{candidate.votesCount} votes</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })
+        )}
+      </CardContent>
+    </Card>
+  </TabsContent>
 
           {/* Profile Tab */}
           <TabsContent value="profile">
