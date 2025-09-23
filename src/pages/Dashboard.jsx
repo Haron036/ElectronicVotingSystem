@@ -73,7 +73,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!isEditing) {
       fetchData();
-      // If you want refresh, uncomment below with caution on interval duration
+      
       // const interval = setInterval(fetchData, 10000);
       // return () => clearInterval(interval);
     }
@@ -172,6 +172,12 @@ const completedElections = elections.filter((e) => {
       toast.error("Failed to update profile. Please try again.");
     }
   };
+  
+  useEffect(() => {
+  console.log("Receipts (votes):", receipts);
+  console.log("Completed Elections:", completedElections);
+}, [receipts, completedElections]);
+
  return (
     <div className="min-h-screen bg-background">
       {/* Header */}
