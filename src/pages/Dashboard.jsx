@@ -105,11 +105,24 @@ const Dashboard = () => {
       </div>
     );
   }
+const now = new Date();
 
+const activeElections = elections.filter((e) => {
+  const start = new Date(e.startDate);
+  const end = new Date(e.endDate);
+  return now >= start && now <= end;
+});
 
-  const activeElections = elections.filter((e) => e.status === "ACTIVE");
-  const upcomingElections = elections.filter((e) => e.status === "UPCOMING");
-  const completedElections = elections.filter((e) => e.status === "COMPLETED");
+const upcomingElections = elections.filter((e) => {
+  const start = new Date(e.startDate);
+  return now < start;
+});
+
+const completedElections = elections.filter((e) => {
+  const end = new Date(e.endDate);
+  return now > end;
+});
+
 
   const getStatusColor = (status) => {
     switch (status) {
