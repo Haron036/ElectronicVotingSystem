@@ -74,8 +74,8 @@ const Dashboard = () => {
     if (!isEditing) {
       fetchData();
 
-      // const interval = setInterval(fetchData, 10000);
-      // return () => clearInterval(interval);
+       const interval = setInterval(fetchData, 10000);
+       return () => clearInterval(interval);
     }
   }, [navigate, isEditing]);
 
