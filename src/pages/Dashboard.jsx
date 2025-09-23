@@ -172,11 +172,6 @@ const completedElections = elections.filter((e) => {
       toast.error("Failed to update profile. Please try again.");
     }
   };
-  
-  useEffect(() => {
-  console.log("Receipts (votes):", receipts);
-  console.log("Completed Elections:", completedElections);
-}, [receipts, completedElections]);
 
  return (
     <div className="min-h-screen bg-background">
