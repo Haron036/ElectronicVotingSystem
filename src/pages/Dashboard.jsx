@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import PrintableReceipts from "../components/PrintableReceipts.jsx";
@@ -32,6 +32,7 @@ import ReactCountryFlag from "react-country-flag";
 import toast from "react-hot-toast";
 import { countiesAndConstituencies } from "../data/counties.js";
 
+
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [elections, setElections] = useState([]);
@@ -48,16 +49,14 @@ const Dashboard = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Determine initial tab from URL
   const searchParams = new URLSearchParams(location.search);
   const initialTab = searchParams.get("tab") || "elections";
-
-  // State to control the active tab
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  const componentRef = useRef();
+  // Ref for printable component
+  const componentRef = useRef(null);
 
-  // Use a ref to store the print function from the hook
+  // Print handler setup using react-to-print
   const handlePrint = useReactToPrint({
     content: () => {
       if (!componentRef.current) {
@@ -70,7 +69,6 @@ const Dashboard = () => {
     onAfterPrint: () => console.log("Print success!"),
     onPrintError: (err) => console.error("Print error:", err),
   });
-
 
   const fetchData = async () => {
     try {
@@ -133,6 +131,7 @@ const Dashboard = () => {
       </div>
     );
   }
+
   const now = new Date();
 
   const activeElections = elections.filter((e) => {
@@ -240,6 +239,7 @@ const Dashboard = () => {
           </div>
         </div>
       </header>
+
       <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
         <div className="mb-6">
@@ -251,6 +251,7 @@ const Dashboard = () => {
             <ArrowLeft size={16} /> Back to Landing
           </Button>
         </div>
+
         {/* Welcome */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -260,6 +261,7 @@ const Dashboard = () => {
             {user.constituency}, {user.county} County
           </p>
         </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
@@ -309,6 +311,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
         {/* Tabs */}
         <Tabs
           value={activeTab}
@@ -341,6 +344,7 @@ const Dashboard = () => {
               Receipts
             </TabsTrigger>
           </TabsList>
+
           {/* Elections Tab */}
           <TabsContent value="elections" className="space-y-6">
             {activeElections.length > 0 && (
@@ -436,6 +440,7 @@ const Dashboard = () => {
               </Card>
             )}
           </TabsContent>
+
           {/* Results Tab */}
           <TabsContent value="results">
             <Card>
@@ -497,6 +502,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
           {/* Profile Tab */}
           <TabsContent value="profile">
             <Card>
@@ -615,56 +621,57 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
           {/* Receipts Tab */}
           <TabsContent value="receipts">
-  <Card>
-    <CardHeader>
-      <CardTitle>Receipts</CardTitle>
-      <CardDescription>Your voting history</CardDescription>
-    </CardHeader>
-    <CardContent>
-      {/* Print button */}
-      <div className="mb-4">
-        <Button
-          onClick={handlePrint}
-          disabled={!user || receipts.length === 0}
-        >
-          Print Receipts as PDF
-        </Button>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Receipts</CardTitle>
+                <CardDescription>Your voting history</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {/* Print button */}
+                <div className="mb-4">
+                  <Button
+                    onClick={handlePrint}
+                    disabled={!user || receipts.length === 0}
+                  >
+                    Print Receipts as PDF
+                  </Button>
+                </div>
 
-      {/* Hidden printable receipts */}
-      <PrintableReceipts
-        ref={componentRef}
-        receipts={receipts}
-        user={user}
-        className="print-hidden"
-      />
+                {/* Printable component: hidden on screen but visible on print */}
+                <div className="print-hidden">
+                  <PrintableReceipts
+                    ref={componentRef}
+                    receipts={receipts}
+                    user={user}
+                  />
+                </div>
 
-      {/* On-screen receipt list */}
-      {receipts.length === 0 ? (
-        <p>You have not voted yet.</p>
-      ) : (
-        <ul className="space-y-2">
-          {receipts.map((receipt) => (
-            <li
-              key={receipt.id}
-              className="border-b pb-2 flex justify-between"
-            >
-              <span>
-                {receipt.electionTitle} – {receipt.candidateName}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                {new Date(receipt.timestamp).toLocaleString()}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </CardContent>
-  </Card>
-</TabsContent>
-
+                {/* On-screen receipt list */}
+                {receipts.length === 0 ? (
+                  <p>You have not voted yet.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {receipts.map((receipt) => (
+                      <li
+                        key={receipt.id}
+                        className="border-b pb-2 flex justify-between"
+                      >
+                        <span>
+                          {receipt.electionTitle} – {receipt.candidateName}
+                        </span>
+                        <span className="text-sm text-muted-foreground">
+                          {new Date(receipt.timestamp).toLocaleString()}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
