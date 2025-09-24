@@ -32,7 +32,6 @@ import ReactCountryFlag from "react-country-flag";
 import toast from "react-hot-toast";
 import { countiesAndConstituencies } from "../data/counties.js";
 
-
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [elections, setElections] = useState([]);
@@ -53,14 +52,14 @@ const Dashboard = () => {
   const initialTab = searchParams.get("tab") || "elections";
   const [activeTab, setActiveTab] = useState(initialTab);
 
- const componentRef = useRef(null);
+  const componentRef = useRef(null);
 
-const handlePrint = useReactToPrint({
-  contentRef: componentRef,
-  documentTitle: "Voting Receipts",
-  onAfterPrint: () => console.log("Print success!"),
-  onPrintError: (err) => console.error("Print error:", err),
-});
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: "Voting Receipts",
+    onAfterPrint: () => console.log("Print success!"),
+    onPrintError: (err) => console.error("Print error:", err),
+  });
 
   const fetchData = async () => {
     try {
@@ -627,6 +626,7 @@ const handlePrint = useReactToPrint({
                   <Button
                     onClick={handlePrint}
                     disabled={!user || receipts.length === 0}
+                    className="bg-green-500 text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Print Receipts as PDF
                   </Button>
