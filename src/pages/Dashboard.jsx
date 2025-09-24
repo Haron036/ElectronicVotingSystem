@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { useReactToPrint } from 'react-to-print'; // Import the hook
+import PrintableReceipts from '../components/PrintableReceipts.jsx'
 import api from "../api.js"; // Use configured axios instance with interceptors
 import { Button } from "../components/ui/button.jsx";
 import {
@@ -41,6 +43,7 @@ const Dashboard = () => {
     lastName: "",
     county: "",
     constituency: "",
+    
   });
   const location = useLocation();
   const navigate = useNavigate();
@@ -178,6 +181,14 @@ const Dashboard = () => {
       toast.error("Failed to update profile. Please try again.");
     }
   };
+
+  const componentRef = useRef(); // Create a ref to the printable component
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current, // Reference the component to be printed
+    documentTitle: 'My Voter Receipts', // Set the PDF title
+    onAfterPrint: () => toast.success('PDF generated successfully!'), // Optional callback
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -619,34 +630,45 @@ const Dashboard = () => {
 
           {/* Receipts Tab */}
           <TabsContent value="receipts">
-            <Card>
-              <CardHeader>
-                <CardTitle>Receipts</CardTitle>
-                <CardDescription>Your voting history</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {receipts.length === 0 ? (
-                  <p>You have not voted yet.</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {receipts.map((receipt) => (
-                      <li
-                        key={receipt.id}
-                        className="border-b pb-2 flex justify-between"
-                      >
-                        <span>
-                          {receipt.electionTitle} – {receipt.candidateName}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(receipt.timestamp).toLocaleString()}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+      <Card>
+        <CardHeader>
+          <CardTitle>Receipts</CardTitle>
+          <CardDescription>Your voting history</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* Add the print button */}
+          <div className="mb-4">
+            <Button onClick={handlePrint}>Print Receipts as PDF</Button>
+          </div>
+
+          {/* This is the div that will be printed */}
+          <div style={{ display: "none" }}> 
+            <PrintableReceipts ref={componentRef} receipts={receipts} user={user} />
+          </div>
+
+          {/* Existing receipt list for on-screen display */}
+          {receipts.length === 0 ? (
+            <p>You have not voted yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {receipts.map((receipt) => (
+                <li
+                  key={receipt.id}
+                  className="border-b pb-2 flex justify-between"
+                >
+                  <span>
+                    {receipt.electionTitle} – {receipt.candidateName}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {new Date(receipt.timestamp).toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    </TabsContent>
         </Tabs>
       </div>
     </div>
