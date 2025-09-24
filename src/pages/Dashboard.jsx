@@ -611,52 +611,54 @@ const Dashboard = () => {
           </TabsContent>
           {/* Receipts Tab */}
           <TabsContent value="receipts">
-            <Card>
-              <CardHeader>
-                <CardTitle>Receipts</CardTitle>
-                <CardDescription>Your voting history</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Print button */}
-                <div className="mb-4">
-                  <Button
-                    onClick={handlePrint}
-                    disabled={receipts.length === 0}
-                  >
-                    Print Receipts as PDF
-                  </Button>
-                </div>
+  <Card>
+    <CardHeader>
+      <CardTitle>Receipts</CardTitle>
+      <CardDescription>Your voting history</CardDescription>
+    </CardHeader>
+    <CardContent>
+      {/* Print button */}
+      <div className="mb-4">
+        <Button
+          onClick={handlePrint}
+          disabled={!user || receipts.length === 0}
+        >
+          Print Receipts as PDF
+        </Button>
+      </div>
 
-                {/* Hidden printable component */}
-                <PrintableReceipts
-                  ref={componentRef}
-                  receipts={receipts}
-                  user={user}
-                />
+      {/* Hidden printable receipts */}
+      <PrintableReceipts
+        ref={componentRef}
+        receipts={receipts}
+        user={user}
+        className="print-hidden"
+      />
 
-                {/* Existing receipt list */}
-                {receipts.length === 0 ? (
-                  <p>You have not voted yet.</p>
-                ) : (
-                  <ul className="space-y-2">
-                    {receipts.map((receipt) => (
-                      <li
-                        key={receipt.id}
-                        className="border-b pb-2 flex justify-between"
-                      >
-                        <span>
-                          {receipt.electionTitle} – {receipt.candidateName}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {new Date(receipt.timestamp).toLocaleString()}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+      {/* On-screen receipt list */}
+      {receipts.length === 0 ? (
+        <p>You have not voted yet.</p>
+      ) : (
+        <ul className="space-y-2">
+          {receipts.map((receipt) => (
+            <li
+              key={receipt.id}
+              className="border-b pb-2 flex justify-between"
+            >
+              <span>
+                {receipt.electionTitle} – {receipt.candidateName}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {new Date(receipt.timestamp).toLocaleString()}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </CardContent>
+  </Card>
+</TabsContent>
+
         </Tabs>
       </div>
     </div>

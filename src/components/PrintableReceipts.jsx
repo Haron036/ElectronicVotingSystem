@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import clsx from "clsx"; 
+import clsx from "clsx";
 
 const PrintableReceipts = forwardRef(({ receipts = [], user, className }, ref) => {
   return (
@@ -41,5 +41,4 @@ const PrintableReceipts = forwardRef(({ receipts = [], user, className }, ref) =
 });
 
 PrintableReceipts.displayName = "PrintableReceipts";
-
 export default PrintableReceipts;

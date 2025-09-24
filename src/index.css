@@ -103,23 +103,19 @@
     --color-ring: hsl(142 55% 45%);
   }
   /* Hide off-screen but keep in the DOM */
-.print-hidden {
+  .print-hidden {
   position: absolute;
   top: -9999px;
   left: -9999px;
-  visibility: hidden; /* optional: ensures it's not clickable */
+  visibility: hidden;
 }
 
-/* When printing, reset to normal so it shows in the PDF/printout */
 @media print {
   .print-hidden {
     position: static;
-    top: auto;
-    left: auto;
     visibility: visible;
   }
 }
-
 
   body {
     background-color: var(--color-background);
