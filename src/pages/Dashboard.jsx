@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useReactToPrint } from 'react-to-print';
-import PrintableReceipts from '../components/PrintableReceipts.jsx';
+import { useReactToPrint } from "react-to-print";
+import PrintableReceipts from "../components/PrintableReceipts.jsx";
 import api from "../api.js";
 import { Button } from "../components/ui/button.jsx";
 import {
@@ -60,9 +60,9 @@ const Dashboard = () => {
   // Use a ref to store the print function from the hook
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: 'My Voter Receipts',
+    documentTitle: "My Voter Receipts",
     onAfterPrint: () => {
-      toast.success('PDF generated successfully!');
+      toast.success("PDF generated successfully!");
     },
   });
 
@@ -617,14 +617,24 @@ const Dashboard = () => {
                 <CardDescription>Your voting history</CardDescription>
               </CardHeader>
               <CardContent>
-                {/* Print button and hidden printable component */}
+                {/* Print button */}
                 <div className="mb-4">
-                  <Button onClick={handlePrint}>Print Receipts as PDF</Button>
+                  <Button
+                    onClick={handlePrint}
+                    disabled={receipts.length === 0}
+                  >
+                    Print Receipts as PDF
+                  </Button>
                 </div>
-                <div style={{ display: 'none' }}>
-                  <PrintableReceipts ref={componentRef} receipts={receipts} user={user} />
-                </div>
-                {/* Existing receipt list for on-screen display */}
+
+                {/* Hidden printable component */}
+                <PrintableReceipts
+                  ref={componentRef}
+                  receipts={receipts}
+                  user={user}
+                />
+
+                {/* Existing receipt list */}
                 {receipts.length === 0 ? (
                   <p>You have not voted yet.</p>
                 ) : (
