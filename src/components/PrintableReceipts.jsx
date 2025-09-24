@@ -1,8 +1,8 @@
 import React, { forwardRef } from "react";
 
-const PrintableReceipts = forwardRef(({ receipts = [], user, className }, ref) => {
+const PrintableReceipts = forwardRef(({ receipts = [], user, className = "" }, ref) => {
   return (
-    <div ref={ref} className={`p-8 font-sans ${className || ""}`}>
+    <div ref={ref} className={`p-8 font-sans ${className}`}>
       <h1 className="text-3xl font-bold mb-4">
         Voting Receipts for {user?.firstName} {user?.lastName}
       </h1>
@@ -33,4 +33,5 @@ const PrintableReceipts = forwardRef(({ receipts = [], user, className }, ref) =
 });
 
 PrintableReceipts.displayName = "PrintableReceipts";
+
 export default PrintableReceipts;

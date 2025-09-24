@@ -59,14 +59,17 @@ const Dashboard = () => {
 
   // Use a ref to store the print function from the hook
   const handlePrint = useReactToPrint({
-  content: () => {
-    console.log("componentRef.current:", componentRef.current);
-    return componentRef.current;
-  },
-  documentTitle: "Voting Receipts",
-  onAfterPrint: () => console.log("Print success!"),
-  onPrintError: (err) => console.error("Print error:", err),
-});
+    content: () => {
+      if (!componentRef.current) {
+        console.error("Printable component ref is not available for printing.");
+        return null;
+      }
+      return componentRef.current;
+    },
+    documentTitle: "Voting Receipts",
+    onAfterPrint: () => console.log("Print success!"),
+    onPrintError: (err) => console.error("Print error:", err),
+  });
 
 
   const fetchData = async () => {
