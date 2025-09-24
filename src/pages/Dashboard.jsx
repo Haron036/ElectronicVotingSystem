@@ -649,6 +649,9 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <div style={{ display: 'none' }}>
+      <PrintableReceipts ref={componentRef} receipts={receipts} user={user} />
+    </div>
     </div>
   );
 };
