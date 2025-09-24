@@ -1,8 +1,21 @@
 import { Button } from "../components/ui/button.jsx";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card.jsx";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card.jsx";
 import { Badge } from "../components/ui/badge.jsx";
 import { Link } from "react-router-dom";
-import { Vote, Shield, Users, BarChart3, CheckCircle, Lock } from "lucide-react";
+import {
+  Vote,
+  Shield,
+  Users,
+  BarChart3,
+  CheckCircle,
+  Lock,
+} from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 
 const Landing = () => {
@@ -11,13 +24,26 @@ const Landing = () => {
       {/* Navigation */}
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2"> <Vote className="h-8 w-8 text-accent" /> <span className="text-2xl font-bold text-foreground">E-VoteKE</span> <ReactCountryFlag countryCode="KE" svg style={{ width: 'auto', height: '1.5rem', }} /> </div>
+          <div className="flex items-center space-x-2">
+            {" "}
+            <Vote className="h-8 w-8 text-accent" />{" "}
+            <span className="text-2xl font-bold text-foreground">E-VoteKE</span>{" "}
+            <ReactCountryFlag
+              countryCode="KE"
+              svg
+              style={{ width: "auto", height: "1.5rem" }}
+            />{" "}
+          </div>
           <div className="flex items-center space-x-4">
             <Link to="/auth/login">
-              <Button variant="outline" className="hover:bg-green-600">Login</Button>
+              <Button variant="outline" className="hover:bg-green-600">
+                Login
+              </Button>
             </Link>
             <Link to="/auth/register">
-              <Button  variant="outline" className="hover:bg-green-600">Register to Vote</Button>
+              <Button variant="outline" className="hover:bg-green-600">
+                Register to Vote
+              </Button>
             </Link>
           </div>
         </div>
@@ -30,17 +56,25 @@ const Landing = () => {
             Your Voice, Your Vote, Your Future
           </h1>
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto opacity-90">
-            Secure, transparent, and accessible electronic voting for all Kenyan citizens. 
-            Participate in democracy from anywhere, anytime.
+            Secure, transparent, and accessible electronic voting for all Kenyan
+            citizens. Participate in democracy from anywhere, anytime.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/register">
-              <Button size="lg" variant="outline"  className="border-primary-foreground text-primary hover:bg-green-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-primary-foreground text-primary hover:bg-green-600"
+              >
                 Register as Voter
               </Button>
             </Link>
-            <Link to="/results">
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-green-600">
+            <Link to="/dashboard?tab=results">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-primary-foreground text-primary-foreground hover:bg-green-600"
+              >
                 View Results
               </Button>
             </Link>
@@ -52,19 +86,23 @@ const Landing = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-600 mb-4">Why Choose E-VoteKE?</h2>
+            <h2 className="text-4xl font-bold text-green-600 mb-4">
+              Why Choose E-VoteKE?
+            </h2>
             <p className="text-xl  text-muted-foreground max-w-2xl mx-auto">
-              Built with cutting-edge security and Kenya's administrative structure in mind
+              Built with cutting-edge security and Kenya's administrative
+              structure in mind
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="border-border hover:shadow-lg transition-transform duration-300 hover:scale-105 ">
               <CardHeader>
                 <Shield className="h-12 w-12 text-accent mb-4" />
                 <CardTitle>Bank-Grade Security</CardTitle>
                 <CardDescription>
-                  End-to-end encryption and blockchain-verified integrity ensure your vote is protected
+                  End-to-end encryption and blockchain-verified integrity ensure
+                  your vote is protected
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -74,7 +112,8 @@ const Landing = () => {
                 <Users className="h-12 w-12 text-secondary mb-4" />
                 <CardTitle>Kenya Structure</CardTitle>
                 <CardDescription>
-                  Organized by counties, constituencies, wards, and polling stations - just like our physical system
+                  Organized by counties, constituencies, wards, and polling
+                  stations - just like our physical system
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -84,7 +123,8 @@ const Landing = () => {
                 <BarChart3 className="h-12 w-12 text-info mb-4" />
                 <CardTitle>Real-Time Results</CardTitle>
                 <CardDescription>
-                  Watch live tallies and get instant results as votes are counted transparently
+                  Watch live tallies and get instant results as votes are
+                  counted transparently
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -94,7 +134,8 @@ const Landing = () => {
                 <CheckCircle className="h-12 w-12 text-success mb-4" />
                 <CardTitle>Verified Voting</CardTitle>
                 <CardDescription>
-                  Get a receipt to verify your vote was counted while maintaining complete anonymity
+                  Get a receipt to verify your vote was counted while
+                  maintaining complete anonymity
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -104,7 +145,8 @@ const Landing = () => {
                 <Lock className="h-12 w-12 text-warning mb-4" />
                 <CardTitle>Audit Trail</CardTitle>
                 <CardDescription>
-                  Complete transparency with immutable logs that can be audited by election observers
+                  Complete transparency with immutable logs that can be audited
+                  by election observers
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -114,7 +156,8 @@ const Landing = () => {
                 <Vote className="h-12 w-12 text-accent mb-4" />
                 <CardTitle>Accessible Anywhere</CardTitle>
                 <CardDescription>
-                  Vote from your phone, computer, or any internet-connected device with full accessibility support
+                  Vote from your phone, computer, or any internet-connected
+                  device with full accessibility support
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -155,7 +198,7 @@ const Landing = () => {
               Supporting all levels of Kenyan elections
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg">
               <CardHeader>
@@ -206,41 +249,89 @@ const Landing = () => {
                 <span className="text-xl font-bold">E-VoteKE</span>
               </div>
               <p className="text-primary-foreground/80">
-                Empowering Kenyan democracy through secure, transparent electronic voting.
+                Empowering Kenyan democracy through secure, transparent
+                electronic voting.
               </p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-primary-foreground/80">
-                <li><Link to="/auth/register" className="hover:text-primary-foreground">Register</Link></li>
-                <li><Link to="/auth/login" className="hover:text-primary-foreground">Login</Link></li>
-                <li><Link to="/results" className="hover:text-primary-foreground">Results</Link></li>
-                <li><Link to="/audit" className="hover:text-primary-foreground">Audit Trail</Link></li>
+                <li>
+                  <Link
+                    to="/auth/register"
+                    className="hover:text-primary-foreground"
+                  >
+                    Register
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/auth/login"
+                    className="hover:text-primary-foreground"
+                  >
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/results" className="hover:text-primary-foreground">
+                    Results
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/audit" className="hover:text-primary-foreground">
+                    Audit Trail
+                  </Link>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Resources</h4>
               <ul className="space-y-2 text-primary-foreground/80">
-                <li><a href="#" className="hover:text-primary-foreground">Voter Guide</a></li>
-                <li><a href="#" className="hover:text-primary-foreground">Security Info</a></li>
-                <li><a href="#" className="hover:text-primary-foreground">Contact IEBC</a></li>
-                <li><a href="#" className="hover:text-primary-foreground">Help Center</a></li>
+                <li>
+                  <a href="#" className="hover:text-primary-foreground">
+                    Voter Guide
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary-foreground">
+                    Security Info
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary-foreground">
+                    Contact IEBC
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-primary-foreground">
+                    Help Center
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Status</h4>
               <div className="space-y-2">
-                <Badge variant="outline" className="border-primary-foreground text-primary-foreground">
+                <Badge
+                  variant="outline"
+                  className="border-primary-foreground text-primary-foreground"
+                >
                   System Online
                 </Badge>
-                <Badge variant="outline" className="border-primary-foreground text-primary-foreground">
+                <Badge
+                  variant="outline"
+                  className="border-primary-foreground text-primary-foreground"
+                >
                   Secure Connection
                 </Badge>
               </div>
             </div>
           </div>
           <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/60">
-            <p>&copy; 2025 E-VoteKE. Built for the people of Kenya by © Aron kipkirui Ngetich.</p>
+            <p>
+              &copy; 2025 E-VoteKE. Built for the people of Kenya by © Aron
+              kipkirui Ngetich.
+            </p>
           </div>
         </div>
       </footer>

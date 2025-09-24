@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../api.js"; // Use configured axios instance with interceptors
 import { Button } from "../components/ui/button.jsx";
 import {
@@ -41,8 +42,14 @@ const Dashboard = () => {
     county: "",
     constituency: "",
   });
-
+  const location = useLocation();
   const navigate = useNavigate();
+  // Determine initial tab from URL
+  const searchParams = new URLSearchParams(location.search);
+  const initialTab = searchParams.get("tab") || "elections";
+
+  // State to control the active tab
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   const fetchData = async () => {
     try {
@@ -74,8 +81,8 @@ const Dashboard = () => {
     if (!isEditing) {
       fetchData();
 
-       const interval = setInterval(fetchData, 10000);
-       return () => clearInterval(interval);
+      const interval = setInterval(fetchData, 10000);
+      return () => clearInterval(interval);
     }
   }, [navigate, isEditing]);
 
@@ -295,7 +302,11 @@ const Dashboard = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="elections" className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger
               value="elections"
