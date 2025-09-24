@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { useReactToPrint } from 'react-to-print';
-import PrintableReceipts from '../components/PrintableReceipts.jsx';
+import { useReactToPrint } from "react-to-print";
+import PrintableReceipts from "../components/PrintableReceipts.jsx";
 import api from "../api.js";
 import { Button } from "../components/ui/button.jsx";
 import {
@@ -57,19 +57,24 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const componentRef = useRef();
-
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    documentTitle: 'My Voter Receipts',
+    documentTitle: "My Voter Receipts",
     onAfterPrint: () => {
-      toast.success('PDF generated successfully!');
+      toast.success("PDF generated successfully!");
       setShowPrintable(false);
     },
   });
 
+  // New useEffect to handle printing after component is rendered
+  useEffect(() => {
+    if (showPrintable) {
+      handlePrint();
+    }
+  }, [showPrintable, handlePrint]);
+
   const handlePrintClick = () => {
     setShowPrintable(true);
-    setTimeout(handlePrint, 100);
   };
 
   const fetchData = async () => {
@@ -617,22 +622,22 @@ const Dashboard = () => {
           </TabsContent>
           {/* Receipts Tab */}
           <TabsContent value="receipts">
-            <Card>
-              <CardHeader>
-                <CardTitle>Receipts</CardTitle>
-                <CardDescription>Your voting history</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/*  print button */}
-                <div className="mb-4">
-                  <Button onClick={handlePrintClick}>Print Receipts as PDF</Button>
-                </div>
-                {/* Conditionally render the printable component */}
-                {showPrintable && (
-                  <div className="absolute top-0 left-0 w-full h-full -z-10 opacity-0">
-                    <PrintableReceipts ref={componentRef} receipts={receipts} user={user} />
-                  </div>
-                )}
+      <Card>
+        <CardHeader>
+          <CardTitle>Receipts</CardTitle>
+          <CardDescription>Your voting history</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* Add the print button */}
+          <div className="mb-4">
+            <Button onClick={handlePrintClick}>Print Receipts as PDF</Button>
+          </div>
+          {/* Conditionally render the printable component */}
+          {showPrintable && (
+            <div className="absolute top-0 left-0 w-full h-full -z-10 opacity-0">
+              <PrintableReceipts ref={componentRef} receipts={receipts} user={user} />
+            </div>
+          )}
                 {/* Receipt list for on-screen display */}
                 {receipts.length === 0 ? (
                   <p>You have not voted yet.</p>
