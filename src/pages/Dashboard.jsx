@@ -53,22 +53,14 @@ const Dashboard = () => {
   const initialTab = searchParams.get("tab") || "elections";
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  // Ref for printable component
-  const componentRef = useRef(null);
+ const componentRef = useRef(null);
 
-  // Print handler setup using react-to-print
-  const handlePrint = useReactToPrint({
-    content: () => {
-      if (!componentRef.current) {
-        console.error("Printable component ref is not available for printing.");
-        return null;
-      }
-      return componentRef.current;
-    },
-    documentTitle: "Voting Receipts",
-    onAfterPrint: () => console.log("Print success!"),
-    onPrintError: (err) => console.error("Print error:", err),
-  });
+const handlePrint = useReactToPrint({
+  contentRef: componentRef,
+  documentTitle: "Voting Receipts",
+  onAfterPrint: () => console.log("Print success!"),
+  onPrintError: (err) => console.error("Print error:", err),
+});
 
   const fetchData = async () => {
     try {
