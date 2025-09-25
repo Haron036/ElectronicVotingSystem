@@ -6,7 +6,7 @@ const PrintableReceipts = forwardRef(({ receipts = [], user, className = "" }, r
     <div className={`relative p-8 font-sans ${className}`} ref={ref}>
       {/* Watermark wrapper */}
       <div className="watermark-wrapper">
-        <span className="watermark-text">IEBC</span>
+        <span className="watermark-text text-green-500">IEBC</span>
       </div>
 
       <h1 className="text-3xl text-green-500 font-bold mb-4">
