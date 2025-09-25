@@ -26,8 +26,8 @@
 }
 
 .dark .watermark-text {
-  color: rgba(132, 204, 22, 0.1);
-  filter: drop-shadow(0 0 2px rgba(132, 204, 22, 0.15));
+  color: #28ef0eee;
+  filter: drop-shadow(0 0 2px hsla(130, 96%, 48%, 0.939));
 }
 
 @media print {
