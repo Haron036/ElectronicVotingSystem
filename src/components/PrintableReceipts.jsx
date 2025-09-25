@@ -3,7 +3,7 @@ import React, { forwardRef } from "react";
 const PrintableReceipts = forwardRef(({ receipts = [], user, className = "" }, ref) => {
   return (
     <div ref={ref} className={`p-8 font-sans ${className}`}>
-      <h1 className="text-3xl font-bold mb-4">
+      <h1 className="text-3xl text-green-500 font-bold mb-4">
         Voting Receipts for {user?.firstName} {user?.lastName}
       </h1>
       <p className="text-sm text-gray-600 mb-6">
