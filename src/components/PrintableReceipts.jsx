@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import "./index.css"; 
+import "./PrintableReceipts.css"; 
 
 const PrintableReceipts = forwardRef(({ receipts = [], user, className = "" }, ref) => {
   return (
