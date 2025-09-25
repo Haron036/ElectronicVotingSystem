@@ -46,7 +46,26 @@ const Register = () => {
   });
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === "phone") {
+      // Enforce phone number to start with +254
+      if (!value.startsWith("+254")) {
+        value = "+254";
+      }
+      // Remove non-digit characters after +254
+      let digits = value.slice(4).replace(/\D/g, "");
+      // Limit to max 9 digits
+      if (digits.length > 9) {
+        digits = digits.slice(0, 9);
+      }
+      // Set the phone with prefix + digits
+      value = "+254" + digits;
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -87,7 +106,8 @@ const Register = () => {
     } catch (error) {
       console.error("Registration error:", error);
       toast.error(
-        error.response?.data?.message || "Something went wrong. Please try again."
+        error.response?.data?.message ||
+          "Something went wrong. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -104,12 +124,17 @@ const Register = () => {
           <div className="flex items-center justify-center mb-2">
             <Vote className="w-10 h-10 text-blue-600" />
           </div>
-          <CardTitle className="text-center text-xl">Create Your Account</CardTitle>
+          <CardTitle className="text-center text-xl">
+            Create Your Account
+          </CardTitle>
           <CardDescription className="text-center">
             Step {currentStep} of 3
           </CardDescription>
           <div className="absolute top-4 left-4">
-            <Link to="/" className="flex items-center text-blue-600 hover:underline">
+            <Link
+              to="/"
+              className="flex items-center text-blue-600 hover:underline"
+            >
               ← Home
             </Link>
           </div>
@@ -124,7 +149,9 @@ const Register = () => {
                   <Input
                     type="text"
                     value={formData.nationalId}
-                    onChange={(e) => handleInputChange("nationalId", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("nationalId", e.target.value)
+                    }
                   />
                 </div>
                 <div className="mb-4">
@@ -132,7 +159,9 @@ const Register = () => {
                   <Input
                     type="text"
                     value={formData.firstName}
-                    onChange={(e) => handleInputChange("firstName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("firstName", e.target.value)
+                    }
                   />
                 </div>
                 <div className="mb-4">
@@ -140,7 +169,9 @@ const Register = () => {
                   <Input
                     type="text"
                     value={formData.lastName}
-                    onChange={(e) => handleInputChange("lastName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("lastName", e.target.value)
+                    }
                   />
                 </div>
                 <div className="mb-4">
@@ -162,6 +193,7 @@ const Register = () => {
                   <Input
                     type="text"
                     value={formData.phone}
+                    maxLength={13} // +254 + 9 digits = 13 chars
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                   />
                 </div>
@@ -170,7 +202,9 @@ const Register = () => {
                   <Input
                     type="date"
                     value={formData.dateOfBirth}
-                    onChange={(e) => handleInputChange("dateOfBirth", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("dateOfBirth", e.target.value)
+                    }
                   />
                 </div>
                 <div className="mb-4">
@@ -198,7 +232,9 @@ const Register = () => {
                   <Label>Constituency</Label>
                   <Select
                     value={formData.constituency}
-                    onValueChange={(value) => handleInputChange("constituency", value)}
+                    onValueChange={(value) =>
+                      handleInputChange("constituency", value)
+                    }
                     disabled={!formData.county}
                   >
                     <SelectTrigger>
@@ -227,7 +263,9 @@ const Register = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("password", e.target.value)
+                    }
                   />
                   <button
                     type="button"
@@ -242,21 +280,29 @@ const Register = () => {
                   <Input
                     type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
                   />
                   <button
                     type="button"
                     className="absolute right-2 top-8"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
                   </button>
                 </div>
                 <div className="mb-4 flex items-center space-x-2">
                   <input
                     type="checkbox"
                     checked={formData.acceptTerms}
-                    onChange={(e) => handleInputChange("acceptTerms", e.target.checked)}
+                    onChange={(e) =>
+                      handleInputChange("acceptTerms", e.target.checked)
+                    }
                   />
                   <Label>I accept the terms & conditions</Label>
                 </div>
