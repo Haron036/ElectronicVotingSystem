@@ -117,6 +117,60 @@
   }
 }
 
+/* Watermark wrapper covering full page */
+.watermark-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* Keeps watermark non-interactive */
+  z-index: 0; /* Behind main content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+}
+
+/* Watermark text diagonal and large */
+.watermark-text {
+  font-size: 8rem; /* Large size to cover page */
+  font-weight: bold;
+  color: rgba(34, 197, 94, 0.1); /* Using Tailwind green-500 with opacity */
+  user-select: none;
+  white-space: nowrap;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  filter: drop-shadow(0 0 2px rgba(34, 197, 94, 0.15));
+}
+
+/* Lower opacity in dark mode */
+.dark .watermark-text {
+  color: rgba(132, 204, 22, 0.1); /* Tailwind green-400 with opacity */
+  filter: drop-shadow(0 0 2px rgba(132, 204, 22, 0.15));
+}
+
+/* Ensure watermark appears in print */
+@media print {
+  .watermark-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+  }
+  .watermark-text {
+    color: rgba(34, 197, 94, 0.15);
+    font-size: 9rem;
+    filter: none;
+    opacity: 0.15;
+  }
+}
+
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
