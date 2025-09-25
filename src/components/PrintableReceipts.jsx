@@ -29,7 +29,7 @@ const PrintableReceipts = forwardRef(({ receipts = [], user, className = "" }, r
                   <h3 className="text-lg font-semibold">{receipt.electionTitle}</h3>
                   <span className="text-xs text-green-500">Receipt ID: {receipt.id}</span>
                 </div>
-                <p className="text-sm text-green-500">Candidate Voted For: {receipt.candidateName}</p>
+                <p className="text-sm text-gray-500">Candidate Voted For: {receipt.candidateName}</p>
                 <p className="text-sm text-gray-500">
                   Voted on: {new Date(receipt.timestamp).toLocaleString()}
                 </p>
